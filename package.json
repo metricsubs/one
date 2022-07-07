@@ -1,0 +1,19 @@
+{
+  "name": "one",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/metricsubs/one",
+  "author": "Dizy (Ziyang) <mhisf@vip.qq.com>",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "eslint": "^8.19.0",
+    "prettier": "^2.7.1",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.8.2",
+    "typescript": "^4.7.4"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}

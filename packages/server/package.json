@@ -1,0 +1,20 @@
+{
+  "name": "@metricsubs/one-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "ts-node --project src/tsconfig.json --transpile-only src/main.ts"
+  },
+  "dependencies": {
+    "@feathersjs/feathers": "^5.0.0-pre.26",
+    "@feathersjs/koa": "^5.0.0-pre.26",
+    "@feathersjs/socketio": "^5.0.0-pre.26",
+    "koa-static": "^5.0.0",
+    "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/koa-static": "^4.0.2",
+    "@types/node": "^18.0.3"
+  }
+}
