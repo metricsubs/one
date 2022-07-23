@@ -25,5 +25,11 @@
       "mode": "auto"
     }
   ],
-  "cSpell.words": ["feathersjs", "metricsubs", "nodenext", "socketio"]
+  "cSpell.words": [
+    "feathersjs",
+    "metricsubs",
+    "nodenext",
+    "socketio",
+    "tailwindcss"
+  ]
 }
