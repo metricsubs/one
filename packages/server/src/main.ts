@@ -3,9 +3,11 @@ import {getApp} from './app';
 async function main(): Promise<void> {
   const app = await getApp();
 
+  const port = app.get('port') || 3030;
+
   app
-    .listen(3030)
-    .then(() => console.log('Feathers server listening on localhost:3030'));
+    .listen(port)
+    .then(() => console.log(`Feathers server listening on port ${port}`));
 
   app.service('test').create({
     text: 'Hello world from the server',

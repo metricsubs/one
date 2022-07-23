@@ -1,0 +1,14 @@
+{
+  "port": 3030,
+  "authentication": {
+    "local": {
+      "usernameField": "email",
+      "passwordField": "password"
+    },
+    "secret": "secret",
+    "service": "users"
+  },
+  "mongo": {
+    "uri": "mongodb://localhost:27017/test"
+  }
+}

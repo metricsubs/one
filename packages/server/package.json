@@ -7,10 +7,15 @@
     "dev": "ts-node --project src/tsconfig.json --transpile-only src/main.ts"
   },
   "dependencies": {
-    "@feathersjs/feathers": "^5.0.0-pre.26",
-    "@feathersjs/koa": "^5.0.0-pre.26",
-    "@feathersjs/socketio": "^5.0.0-pre.26",
+    "@feathersjs/authentication": "^5.0.0-pre.27",
+    "@feathersjs/authentication-local": "^5.0.0-pre.27",
+    "@feathersjs/configuration": "^5.0.0-pre.27",
+    "@feathersjs/feathers": "^5.0.0-pre.27",
+    "@feathersjs/koa": "^5.0.0-pre.27",
+    "@feathersjs/mongodb": "^5.0.0-pre.27",
+    "@feathersjs/socketio": "^5.0.0-pre.27",
     "koa-static": "^5.0.0",
+    "mongodb": "^4.8.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
