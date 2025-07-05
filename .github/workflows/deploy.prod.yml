@@ -42,8 +42,6 @@ jobs:
             cp ./build/client/index.html ./build/client/404.html
         env:
           VITE_CONVEX_URL: ${{ vars.CONVEX_SELF_HOSTED_URL }}
-          VITE_AUTH_KIT_API_HOSTNAME: ${{ vars.VITE_AUTH_KIT_API_HOSTNAME }}
-          VITE_AUTH_KIT_CLIENT_ID: ${{ secrets.VITE_AUTH_KIT_CLIENT_ID }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -74,7 +72,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-            node-version: "22"
+            node-version: "18"
             cache: "npm"
             cache-dependency-path: ./web/package-lock.json
 

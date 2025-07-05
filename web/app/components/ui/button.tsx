@@ -3,7 +3,7 @@ import {
   type ButtonProps as ButtonPrimitiveProps,
   composeRenderProps,
 } from "react-aria-components"
-import { tv, type VariantProps } from "tailwind-variants"
+import { type VariantProps, tv } from "tailwind-variants"
 
 const buttonStyles = tv({
   base: [
@@ -79,7 +79,7 @@ const buttonStyles = tv({
   compoundVariants: [
     {
       size: ["xs", "sq-xs"],
-      className: "rounded-md *:data-[slot=icon]:size-3.5",
+      className: "rounded-md *:data-[slot=icon]:size-3",
     },
   ],
 })
@@ -110,5 +110,5 @@ const Button = ({ className, intent, size, isCircle, ref, ...props }: ButtonProp
   )
 }
 
-export type { ButtonProps }
 export { Button, buttonStyles }
+export type { ButtonProps }
