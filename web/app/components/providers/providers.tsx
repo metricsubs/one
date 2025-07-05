@@ -1,10 +1,10 @@
-import { ConvexAuthProvider } from "@convex-dev/auth/react";
+import { ConvexProvider } from "convex/react";
 import { convex } from '~/lib/convex';
 
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
-        <ConvexAuthProvider client={convex}>
+        <ConvexProvider client={convex}>
             {children}
-        </ConvexAuthProvider>
+        </ConvexProvider>
     )
 }

@@ -12,8 +12,6 @@
     "deploy:convex": "convex deploy"
   },
   "dependencies": {
-    "@auth/core": "^0.37.0",
-    "@convex-dev/auth": "^0.0.87",
     "@intentui/icons": "^1.11.0",
     "@react-email/components": "0.1.1",
     "@react-email/render": "1.1.3",
