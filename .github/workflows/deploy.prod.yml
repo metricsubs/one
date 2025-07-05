@@ -38,7 +38,7 @@ jobs:
         working-directory: ./web
         run: npm run build
         env:
-          VITE_CONVEX_URL: ${{ env.CONVEX_SELF_HOSTED_URL }}
+          VITE_CONVEX_URL: ${{ env.VITE_CONVEX_URL }}
           VITE_AUTH_KIT_API_HOSTNAME: ${{ env.VITE_AUTH_KIT_API_HOSTNAME }}
           VITE_AUTH_KIT_CLIENT_ID: ${{ secrets.VITE_AUTH_KIT_CLIENT_ID }}
 
