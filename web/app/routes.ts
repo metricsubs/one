@@ -5,5 +5,8 @@ export default [
     route("example", "routes/example.tsx"),
     layout("routes/auth/_layout.tsx", [
         route("sign-in", "routes/auth/sign-in.tsx")
+    ]),
+    layout("routes/dashboard/_layout.tsx", [
+        route("projects", "routes/dashboard/projects.tsx")
     ])
 ] satisfies RouteConfig;
