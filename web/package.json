@@ -12,6 +12,7 @@
     "deploy:convex": "convex deploy"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^5.32.4",
     "@intentui/icons": "^1.11.0",
     "@react-email/components": "0.1.1",
     "@react-email/render": "1.1.3",
