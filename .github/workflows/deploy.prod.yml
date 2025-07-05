@@ -37,11 +37,11 @@ jobs:
       - name: Build frontend
         working-directory: ./web
         run: | 
-            echo "VITE_CONVEX_URL: ${{ env.VITE_CONVEX_URL }}"
+            echo "VITE_CONVEX_URL: ${{ vars.CONVEX_SELF_HOSTED_URL }}"
             npm run build
         env:
-          VITE_CONVEX_URL: ${{ env.VITE_CONVEX_URL }}
-          VITE_AUTH_KIT_API_HOSTNAME: ${{ env.VITE_AUTH_KIT_API_HOSTNAME }}
+          VITE_CONVEX_URL: ${{ vars.CONVEX_SELF_HOSTED_URL }}
+          VITE_AUTH_KIT_API_HOSTNAME: ${{ vars.VITE_AUTH_KIT_API_HOSTNAME }}
           VITE_AUTH_KIT_CLIENT_ID: ${{ secrets.VITE_AUTH_KIT_CLIENT_ID }}
 
       - name: Upload artifact
@@ -85,7 +85,7 @@ jobs:
         working-directory: ./web
         run: npm run deploy:convex
         env:
-          CONVEX_SELF_HOSTED_URL: ${{ env.CONVEX_SELF_HOSTED_URL }}
+          CONVEX_SELF_HOSTED_URL: ${{ vars.CONVEX_SELF_HOSTED_URL }}
           CONVEX_SELF_HOSTED_ADMIN_KEY: ${{ secrets.CONVEX_SELF_HOSTED_ADMIN_KEY }}
   
 
