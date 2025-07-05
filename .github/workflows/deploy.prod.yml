@@ -42,10 +42,6 @@ jobs:
           VITE_AUTH_KIT_API_HOSTNAME: ${{ env.VITE_AUTH_KIT_API_HOSTNAME }}
           VITE_AUTH_KIT_CLIENT_ID: ${{ secrets.VITE_AUTH_KIT_CLIENT_ID }}
 
-      - name: Deploy pages
-        working-directory: ./web
-        run: npm run deploy
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
