@@ -39,6 +39,7 @@ jobs:
         run: | 
             echo "VITE_CONVEX_URL: ${{ vars.CONVEX_SELF_HOSTED_URL }}"
             npm run build
+            cp ./web/build/client/index.html ./web/build/client/404.html
         env:
           VITE_CONVEX_URL: ${{ vars.CONVEX_SELF_HOSTED_URL }}
           VITE_AUTH_KIT_API_HOSTNAME: ${{ vars.VITE_AUTH_KIT_API_HOSTNAME }}
