@@ -36,7 +36,9 @@ jobs:
 
       - name: Build frontend
         working-directory: ./web
-        run: npm run build
+        run: | 
+            echo "VITE_CONVEX_URL: ${{ env.VITE_CONVEX_URL }}"
+            npm run build
         env:
           VITE_CONVEX_URL: ${{ env.VITE_CONVEX_URL }}
           VITE_AUTH_KIT_API_HOSTNAME: ${{ env.VITE_AUTH_KIT_API_HOSTNAME }}
