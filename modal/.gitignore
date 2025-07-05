@@ -1,0 +1,16 @@
+__pycache__/
+# Python
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+wheels/
+*.egg-info/
+*.egg
+
+# Poetry
+poetry.lock
+.venv/
+venv/
