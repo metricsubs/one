@@ -1,4 +1,5 @@
 import { SignOutButton, useUser } from "@clerk/clerk-react";
+import { motion } from "motion/react";
 import { Link } from "react-router";
 import LogoIcon from "~/components/common/logo-icon";
 import { Button } from "~/components/ui";
@@ -20,7 +21,11 @@ export default function Home() {
     <LogoIcon className="w-16 h-16 mb-4" />
     <h1 className="text-4xl font-semibold logo-font">MetricSubs</h1>
     <p className="mt-2 text">Tech Without Boundaries</p>
-    {user && <div className="flex flex-col items-center gap-2 mt-2">
+    {user && <motion.div className="flex flex-col items-center gap-2 mt-2"
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: "auto" }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
       <p className="text-sm text-muted-fg">Signed in as {user.emailAddresses[0].emailAddress}</p>
       <div className="flex gap-2">
         <Link to="/dashboard">
@@ -34,6 +39,6 @@ export default function Home() {
           </Button>
         </SignOutButton>
       </div>
-    </div>}
+    </motion.div>}
   </div>;
 }
