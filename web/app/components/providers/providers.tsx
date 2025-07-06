@@ -3,10 +3,10 @@ import { ThemeProvider } from "./theme-provider";
 
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
-        <ConvexClerkProviders>
-            <ThemeProvider>
+        <ThemeProvider>
+            <ConvexClerkProviders>
                 {children}
-            </ThemeProvider>
-        </ConvexClerkProviders>
+            </ConvexClerkProviders>
+        </ThemeProvider>
     )
 }
