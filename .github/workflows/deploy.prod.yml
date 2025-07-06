@@ -1,10 +1,10 @@
 name: Deploy to Prod
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
 
 permissions:
     contents: read
@@ -12,105 +12,112 @@ permissions:
     id-token: write
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+    group: 'pages'
+    cancel-in-progress: false
 
 jobs:
-  build-web:
-    name: Deploy Web
-    environment: prod
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    build-web:
+        name: Deploy Web
+        environment: prod
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: "npm"
-          cache-dependency-path: ./web/package-lock.json
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '22'
+                  cache: 'npm'
+                  cache-dependency-path: ./web/package-lock.json
 
-      - name: Install dependencies
-        working-directory: ./web
-        run: npm install
+            - name: Install dependencies
+              working-directory: ./web
+              run: npm install
 
-      - name: Build frontend
-        working-directory: ./web
-        run: | 
-            npm run build
-            cp ./build/client/index.html ./build/client/404.html
-        env:
-          VITE_CONVEX_URL: ${{ vars.CONVEX_SELF_HOSTED_URL }}
-          VITE_CLERK_FRONTEND_API_URL: ${{ vars.CLERK_FRONTEND_API_URL }}
-          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }}
+            - name: Build frontend
+              working-directory: ./web
+              run: |
+                  npm run build
+                  cp ./build/client/index.html ./build/client/404.html
+              env:
+                  VITE_CONVEX_URL: ${{ vars.CONVEX_SELF_HOSTED_URL }}
+                  VITE_CLERK_FRONTEND_API_URL: ${{ vars.CLERK_FRONTEND_API_URL }}
+                  VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }}
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./web/build/client
+            - name: Upload artifact
+              uses: actions/upload-pages-artifact@v3
+              with:
+                  path: ./web/build/client
 
-  # Deployment jobs
-  deploy-pages:
-    name: Deploy Pages
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build-web
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+    # Deployment jobs
+    deploy-pages:
+        name: Deploy Pages
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        runs-on: ubuntu-latest
+        needs: build-web
+        steps:
+            - name: Deploy to GitHub Pages
+              id: deployment
+              uses: actions/deploy-pages@v4
 
-  deploy-convex:
-    name: Deploy Convex
-    environment: prod
-    runs-on: ubuntu-latest
-    needs: build-web
-    steps:
-      - uses: actions/checkout@v4
+    deploy-convex:
+        name: Deploy Convex
+        environment: prod
+        runs-on: ubuntu-latest
+        needs: build-web
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-            node-version: "22"
-            cache: "npm"
-            cache-dependency-path: ./web/package-lock.json
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '22'
+                  cache: 'npm'
+                  cache-dependency-path: ./web/package-lock.json
 
-      - name: Install dependencies
-        working-directory: ./web
-        run: npm install
+            - name: Install dependencies
+              working-directory: ./web
+              run: npm install
 
-      - name: Deploy to Convex
-        working-directory: ./web
-        run: npm run deploy:convex
-        env:
-          CLERK_FRONTEND_API_URL: ${{ vars.CLERK_FRONTEND_API_URL }}
-          CONVEX_SELF_HOSTED_URL: ${{ vars.CONVEX_SELF_HOSTED_URL }}
-          SITE_URL: ${{ vars.SITE_URL }}
-          CONVEX_SELF_HOSTED_ADMIN_KEY: ${{ secrets.CONVEX_SELF_HOSTED_ADMIN_KEY }}
-  
-  deploy-modal:
-    name: Deploy Modal
-    environment: prod
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+            - name: Switch to older 18 for Convex
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '18'
+                  cache: 'npm'
+                  cache-dependency-path: ./web/package-lock.json
 
-      - name: Install Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+            - name: Deploy to Convex
+              working-directory: ./web
+              run: npm run deploy:convex
+              env:
+                  CLERK_FRONTEND_API_URL: ${{ vars.CLERK_FRONTEND_API_URL }}
+                  CONVEX_SELF_HOSTED_URL: ${{ vars.CONVEX_SELF_HOSTED_URL }}
+                  SITE_URL: ${{ vars.SITE_URL }}
+                  CONVEX_SELF_HOSTED_ADMIN_KEY: ${{ secrets.CONVEX_SELF_HOSTED_ADMIN_KEY }}
 
-      - name: Install Modal
-        run: |
-          python -m pip install --upgrade pip
-          pip install modal
+    deploy-modal:
+        name: Deploy Modal
+        environment: prod
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Deploy modal
-        working-directory: ./modal
-        run: |
-          modal deploy -m metricsubs_modal.main
-        env:
-          MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
-          MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
+            - name: Install Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: '3.12'
+
+            - name: Install Modal
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install modal
+
+            - name: Deploy modal
+              working-directory: ./modal
+              run: |
+                  modal deploy -m metricsubs_modal.main
+              env:
+                  MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
+                  MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}

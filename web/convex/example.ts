@@ -1,10 +1,7 @@
-import { httpAction } from "./_generated/server";
+import { httpAction } from './_generated/server';
 
 export const exampleHttpAction = httpAction(async () => {
-    return new Response(
-        "Hello, world!",
-        {
-            status: 200
-        }
-    );
+    return new Response('Hello, world!', {
+        status: 200,
+    });
 });

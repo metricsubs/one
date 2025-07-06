@@ -16,6 +16,7 @@ import type {
 import type * as auth from "../auth.js";
 import type * as example from "../example.js";
 import type * as http from "../http.js";
+import type * as large_files from "../large_files.js";
 import type * as projects_stats from "../projects/stats.js";
 
 /**
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   example: typeof example;
   http: typeof http;
+  large_files: typeof large_files;
   "projects/stats": typeof projects_stats;
 }>;
 export declare const api: FilterApi<

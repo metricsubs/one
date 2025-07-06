@@ -1,4 +1,4 @@
-import { defineSchema } from "convex/server";
+import { defineSchema } from 'convex/server';
 
 const schema = defineSchema({
     // Your other tables...

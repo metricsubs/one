@@ -10,7 +10,7 @@ import { cn } from '~/lib/cn';
 interface StatCardProps {
     item: {
         name: string;
-        value: number;
+        value: number | string;
         change: number;
         data: { date: string; value: number }[];
     };
