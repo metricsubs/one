@@ -4,5 +4,6 @@
         "source.fixAll": "explicit",
         "source.organizeImports": "explicit"
     },
-    "editor.wordWrap": "on"
+    "editor.wordWrap": "on",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
 }

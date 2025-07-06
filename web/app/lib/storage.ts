@@ -2,20 +2,20 @@
 export const localStorageWrapper = {
     getItem: (key: string) => {
         if (typeof window === 'undefined') {
-            return undefined;
+            return undefined
         }
-        return localStorage.getItem(key);
+        return localStorage.getItem(key)
     },
     setItem: (key: string, value: string) => {
         if (typeof window === 'undefined') {
-            return;
+            return
         }
-        localStorage.setItem(key, value);
+        localStorage.setItem(key, value)
     },
     removeItem: (key: string) => {
         if (typeof window === 'undefined') {
-            return;
+            return
         }
-        localStorage.removeItem(key);
+        localStorage.removeItem(key)
     },
 }
