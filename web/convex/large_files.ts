@@ -1,4 +1,5 @@
 import {
+    AbortMultipartUploadCommand,
     CompleteMultipartUploadCommand,
     CreateMultipartUploadCommand,
     GetObjectCommand,
@@ -241,6 +242,28 @@ export const completeMultipartUpload = action({
         if (response.Location === undefined) {
             throw new Error('Failed to complete multipart upload');
         }
+        return {
+            fullFileKey: args.fullFileKey,
+        };
+    },
+});
+
+export const abortMultipartUpload = action({
+    args: {
+        fullFileKey: v.string(),
+        uploadId: v.string(),
+    },
+    handler: async (ctx, args) => {
+        const user = await ctx.auth.getUserIdentity();
+        if (!user) {
+            throw new Error('Unauthorized');
+        }
+        const command = new AbortMultipartUploadCommand({
+            Bucket: process.env.S3_BUCKET,
+            Key: args.fullFileKey,
+            UploadId: args.uploadId,
+        });
+        await s3Client.send(command);
         return {
             fullFileKey: args.fullFileKey,
         };
