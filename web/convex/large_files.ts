@@ -1,4 +1,13 @@
-import { AwsClient } from 'aws4fetch';
+import {
+    CompleteMultipartUploadCommand,
+    CreateMultipartUploadCommand,
+    GetObjectCommand,
+    HeadObjectCommand,
+    PutObjectCommand,
+    S3Client,
+    UploadPartCommand,
+} from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { v } from 'convex/values';
 import path from 'path-browserify-esm';
 import { action } from './_generated/server';
@@ -27,11 +36,14 @@ const forbiddenFilenameExtensions = [
 ];
 const maxAllowedUploadSize = 1024 * 1024 * 1024 * 10; // 10GB
 
-const s3Client = new AwsClient({
+const s3Client = new S3Client({
     region: process.env.S3_REGION,
-    accessKeyId: process.env.S3_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY!,
-    service: 's3',
+    endpoint: process.env.S3_ENDPOINT,
+    credentials: {
+        accessKeyId: process.env.S3_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY!,
+    },
+    runtime: 'edge', // works for convex default runtime
 });
 
 export const getPresignedPutObjectUrl = action({
@@ -43,6 +55,7 @@ export const getPresignedPutObjectUrl = action({
     handler: async (ctx, args) => {
         const user = await ctx.auth.getUserIdentity();
         if (!user) {
+            ``;
             throw new Error('Unauthorized');
         }
         let contentType = args.contentType;
@@ -60,16 +73,19 @@ export const getPresignedPutObjectUrl = action({
             args.filename
         );
 
-        url.pathname = `/${fullFileKey}`;
-        const signedRequest = await s3Client.sign(url, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': contentType,
-                'Content-Length': args.contentLength.toString(),
-            },
+        const command = new PutObjectCommand({
+            Bucket: process.env.S3_BUCKET,
+            Key: fullFileKey,
+            ContentType: contentType,
+            ContentLength: args.contentLength,
         });
+
+        const signedUrl = await getSignedUrl(s3Client, command, {
+            expiresIn: 60 * 15, // 15 minutes
+        });
+
         return {
-            url: signedRequest.url,
+            url: signedUrl,
             fullFileKey,
             contentType,
             contentLength: args.contentLength,
@@ -86,21 +102,20 @@ export const getObjectMetadata = action({
         if (!user) {
             throw new Error('Unauthorized');
         }
-        const url = new URL(process.env.S3_ENDPOINT!);
-        url.hostname = `${process.env.S3_BUCKET}.${url.hostname}`;
-        url.pathname = `/${args.fullFileKey}`;
-        const response = await s3Client.fetch(url, {
-            method: 'HEAD',
+        const command = new HeadObjectCommand({
+            Bucket: process.env.S3_BUCKET,
+            Key: args.fullFileKey,
         });
-        if (!response.ok) {
-            throw new Error('Failed to get object metadata');
+        const response = await s3Client.send(command);
+        if (response.ContentLength === undefined) {
+            throw new Error('File not found');
         }
         return {
-            contentType: response.headers.get('Content-Type'),
-            contentLength: response.headers.get('Content-Length'),
-            lastModified: response.headers.get('Last-Modified'),
-            etag: response.headers.get('ETag'),
-            metadata: response.headers.get('x-amz-meta-metadata'),
+            contentType: response.ContentType,
+            contentLength: response.ContentLength,
+            lastModified: response.LastModified?.toISOString(),
+            etag: response.ETag,
+            metadata: response.Metadata,
         };
     },
 });
@@ -114,13 +129,14 @@ export const getPresignedGetObjectUrl = action({
         if (!user) {
             throw new Error('Unauthorized');
         }
-        const url = new URL(process.env.S3_ENDPOINT!);
-        url.hostname = `${process.env.S3_BUCKET}.${url.hostname}`;
-        url.pathname = `/${args.fullFileKey}`;
-        const signedRequest = await s3Client.sign(url, {
-            method: 'GET',
+        const command = new GetObjectCommand({
+            Bucket: process.env.S3_BUCKET,
+            Key: args.fullFileKey,
         });
-        return signedRequest.url;
+        const signedUrl = await getSignedUrl(s3Client, command, {
+            expiresIn: 60 * 30, // 30 minutes
+        });
+        return signedUrl;
     },
 });
 
@@ -142,25 +158,21 @@ export const startMultipartUpload = action({
         if (args.contentLength > maxAllowedUploadSize) {
             throw new Error('File too large');
         }
-        const url = new URL(process.env.S3_ENDPOINT!);
-        url.hostname = `${process.env.S3_BUCKET}.${url.hostname}`;
         const fullFileKey = getFullFileKeyFromFilename(
             String(user.id) || '_unknown',
             args.filename
         );
-        url.pathname = `/${fullFileKey}?uploads`;
-        const response = await s3Client.fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': args.contentType,
-            },
+        const command = new CreateMultipartUploadCommand({
+            Bucket: process.env.S3_BUCKET,
+            Key: fullFileKey,
+            ContentType: contentType,
         });
-        if (!response.ok) {
+        const response = await s3Client.send(command);
+        if (response.UploadId === undefined) {
             throw new Error('Failed to start multipart upload');
         }
-        const { uploadId } = await response.json();
         return {
-            uploadId,
+            uploadId: response.UploadId,
             fullFileKey,
             contentType,
         };
@@ -178,14 +190,17 @@ export const getPresignedPartUploadUrl = action({
         if (!user) {
             throw new Error('Unauthorized');
         }
-        const url = new URL(process.env.S3_ENDPOINT!);
-        url.hostname = `${process.env.S3_BUCKET}.${url.hostname}`;
-        url.pathname = `/${args.fullFileKey}?uploadId=${args.uploadId}&partNumber=${args.partNumber}`;
-        const signedRequest = await s3Client.sign(url, {
-            method: 'PUT',
+        const command = new UploadPartCommand({
+            Bucket: process.env.S3_BUCKET,
+            Key: args.fullFileKey,
+            UploadId: args.uploadId,
+            PartNumber: args.partNumber,
+        });
+        const signedUrl = await getSignedUrl(s3Client, command, {
+            expiresIn: 60 * 15, // 15 minutes
         });
         return {
-            url: signedRequest.url,
+            url: signedUrl,
             fullFileKey: args.fullFileKey,
             uploadId: args.uploadId,
             partNumber: args.partNumber,
@@ -209,17 +224,21 @@ export const completeMultipartUpload = action({
         if (!user) {
             throw new Error('Unauthorized');
         }
-        const url = new URL(process.env.S3_ENDPOINT!);
-        url.hostname = `${process.env.S3_BUCKET}.${url.hostname}`;
-        url.pathname = `/${args.fullFileKey}?uploadId=${args.uploadId}`;
-        const response = await s3Client.fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/xml',
+        const command = new CompleteMultipartUploadCommand({
+            Bucket: process.env.S3_BUCKET,
+            Key: args.fullFileKey,
+            UploadId: args.uploadId,
+            MultipartUpload: {
+                Parts: args.parts.map((item) => {
+                    return {
+                        ETag: item.etag,
+                        PartNumber: item.partNumber,
+                    };
+                }),
             },
-            body: getCompleteMultipartUploadBody(args.parts),
         });
-        if (!response.ok) {
+        const response = await s3Client.send(command);
+        if (response.Location === undefined) {
             throw new Error('Failed to complete multipart upload');
         }
         return {
@@ -227,20 +246,6 @@ export const completeMultipartUpload = action({
         };
     },
 });
-
-function getCompleteMultipartUploadBody(
-    parts: {
-        partNumber: number;
-        etag: string;
-    }[]
-) {
-    const xml = `
-    <CompleteMultipartUpload>
-        ${parts.map((part) => `<Part><PartNumber>${part.partNumber}</PartNumber><ETag>${part.etag}</ETag></Part>`).join('')}
-    </CompleteMultipartUpload>
-    `;
-    return xml;
-}
 
 // sanitize filename, only allow [a-z0-9-_!@#$%()], replace all other characters with underscore including spaces
 function sanitizeFilename(filename: string): string {
