@@ -272,7 +272,7 @@ export const abortMultipartUpload = action({
 
 // sanitize filename, only allow [a-z0-9-_!@#$%()], replace all other characters with underscore including spaces
 function sanitizeFilename(filename: string): string {
-    return filename.trim().replace(/[^a-z0-9-_!@#$%()]/g, '_');
+    return filename.trim().replace(/[^a-zA-Z0-9-_!@#$%()]/g, '_');
 }
 
 function sanitizeFilenameExtension(ext: string): string {
