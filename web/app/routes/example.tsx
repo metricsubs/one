@@ -95,6 +95,7 @@ export default function Example() {
 
             setUploadMessage('Uploading file...');
             const concurrentPoolNum = 2;
+            const startTime = Date.now();
 
             const createPartUploadTask = (index: number) =>
                 Effect.promise(async () => {
@@ -121,7 +122,7 @@ export default function Example() {
                                     (evt.loaded / evt.total) * 100
                                 );
                                 setUploadMessage(
-                                    `Uploading file part #${partNumber}... ${pct}%`
+                                    `Uploading file part #${partNumber}/${partCount}... ${pct}%`
                                 );
                             }
                         },
@@ -166,7 +167,11 @@ export default function Example() {
                 fullFileKey,
             });
             console.log(metadata);
-            setUploadMessage('Uploaded file');
+            const endTime = Date.now();
+            const durationInSeconds = (endTime - startTime) / 1000;
+            setUploadMessage(
+                `Uploaded file in ${durationInSeconds.toFixed(2)}s`
+            );
         } catch (error) {
             console.error(error);
             setUploadMessage('Error: ' + error);
