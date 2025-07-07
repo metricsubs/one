@@ -21,5 +21,6 @@ export * from './separator';
 export * from './show-more';
 export * from './spark-chart';
 export * from './text-field';
+export * from './textarea';
 export * from './tooltip';
 export * from './tracker';

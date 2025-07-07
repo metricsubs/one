@@ -104,7 +104,6 @@ export default function Example() {
                         (index + 1) * maxPartSize
                     );
                     const partMd5 = await md5HashBlob(partBlob);
-                    const partSize = partBlob.size;
                     const { url } = await getPresignedPartUploadUrl({
                         fullFileKey,
                         uploadId,
