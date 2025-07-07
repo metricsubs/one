@@ -59,7 +59,6 @@ export default function Example() {
             await axios.put(url, file, {
                 headers: {
                     'Content-Type': contentType,
-                    'Content-Length': contentLength.toString(),
                 },
                 onUploadProgress: (evt) => {
                     if (evt.total) {
@@ -114,7 +113,6 @@ export default function Example() {
                     const response = await axios.put(url, partBlob, {
                         headers: {
                             'Content-Type': contentType,
-                            'Content-Length': partSize.toString(),
                         },
                         onUploadProgress: (evt) => {
                             if (evt.total) {
