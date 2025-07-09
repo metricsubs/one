@@ -43,6 +43,8 @@ jobs:
                   VITE_CONVEX_URL: ${{ vars.CONVEX_SELF_HOSTED_URL }}
                   VITE_CLERK_FRONTEND_API_URL: ${{ vars.CLERK_FRONTEND_API_URL }}
                   VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }}
+                  VITE_POSTHOG_KEY: ${{ secrets.POSTHOG_KEY }}
+                  VITE_POSTHOG_UI_HOST: ${{ vars.POSTHOG_UI_HOST }}
 
             - name: Upload artifact
               uses: actions/upload-pages-artifact@v3
