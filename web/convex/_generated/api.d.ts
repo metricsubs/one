@@ -19,6 +19,7 @@ import type * as http from "../http.js";
 import type * as large_files from "../large_files.js";
 import type * as projects_manage from "../projects/manage.js";
 import type * as projects_stats from "../projects/stats.js";
+import type * as projects_tags from "../projects/tags.js";
 import type * as utils from "../utils.js";
 
 /**
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   large_files: typeof large_files;
   "projects/manage": typeof projects_manage;
   "projects/stats": typeof projects_stats;
+  "projects/tags": typeof projects_tags;
   utils: typeof utils;
 }>;
 export declare const api: FilterApi<

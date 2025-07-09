@@ -1,3 +1,4 @@
+import { requireUserAuth } from 'convex/auth';
 import { query } from '../_generated/server';
 
 const stats = [
@@ -84,6 +85,7 @@ const stats = [
 export const getStats = query({
     args: {},
     handler: async (ctx) => {
+        await requireUserAuth(ctx);
         return {
             stats,
         };

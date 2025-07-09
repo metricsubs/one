@@ -1,19 +1,23 @@
 import type { Selection } from '@react-types/shared';
 import { LuMonitor, LuMoon, LuSun } from 'react-icons/lu';
-import { useTheme, type Theme } from "~/components/providers/theme-provider";
-import { Button } from "~/components/ui/button";
-import { Menu } from "~/components/ui/menu";
+import { useTheme, type Theme } from '~/components/providers/theme-provider';
+import { Button } from '~/components/ui/button';
+import { Menu } from '~/components/ui/menu';
 
 export function ThemeToggle() {
-    const { setTheme, theme } = useTheme()
+    const { setTheme, theme } = useTheme();
 
     const handleSelectionChange = (selection: Selection) => {
-        if (selection === "all") {
-            return
+        if (selection === 'all') {
+            return;
+        }
+        const newTheme = selection.values().next().value as Theme | undefined;
+        if (!newTheme) {
+            return;
         }
 
-        setTheme(selection.values().next().value as Theme)
-    }
+        setTheme(newTheme);
+    };
 
     return (
         <Menu>
@@ -22,7 +26,11 @@ export function ThemeToggle() {
                 <LuMoon className="absolute h-[1rem] w-[1rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
                 <span className="sr-only">Toggle theme</span>
             </Button>
-            <Menu.Content selectionMode='single' selectedKeys={[theme]} onSelectionChange={handleSelectionChange}>
+            <Menu.Content
+                selectionMode="single"
+                selectedKeys={[theme]}
+                onSelectionChange={handleSelectionChange}
+            >
                 <Menu.Item id="light">
                     <Menu.Label className="flex items-center justify-between">
                         Light
@@ -43,5 +51,5 @@ export function ThemeToggle() {
                 </Menu.Item>
             </Menu.Content>
         </Menu>
-    )
+    );
 }
