@@ -60,10 +60,7 @@ export async function requireUserAuth(
     const publicMetadata = user.public_metadata as unknown as
         | ClerkPublicMetadata
         | undefined;
-    const { bio, roles } = publicMetadata || {
-        bio: undefined,
-        roles: [],
-    };
+    const { bio, roles = [] } = publicMetadata || {};
 
     if (!roles.includes('contributor')) {
         // at least include contributor role for all users
