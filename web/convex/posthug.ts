@@ -48,11 +48,5 @@ export function configurePostHugProxy(http: HttpRouter) {
             method,
             handler: posthugProxyHttpAction,
         });
-
-        http.route({
-            path: '/ph',
-            method,
-            handler: posthugProxyHttpAction,
-        });
     });
 }
