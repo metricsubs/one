@@ -1,5 +1,5 @@
 import { IconChevronsY } from '@intentui/icons';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import type {
     ListBoxProps,
     PopoverProps,
@@ -75,19 +75,24 @@ const SelectList = <T extends object>({
 }: SelectListProps<T>) => {
     const listBoxRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        const listBox = listBoxRef.current;
-        if (!listBox) return;
+    const handleListBoxRef = (element: HTMLDivElement | null) => {
+        listBoxRef.current = element;
 
-        // Find the selected item and scroll to it
-        const selectedItem = listBox.querySelector('[aria-selected="true"]');
-        if (selectedItem) {
-            selectedItem.scrollIntoView({
-                behavior: 'instant',
-                block: 'center',
+        if (element) {
+            // Use requestAnimationFrame to ensure the element is fully rendered
+            requestAnimationFrame(() => {
+                const selectedItem = element.querySelector(
+                    '[aria-selected="true"]'
+                );
+                if (selectedItem) {
+                    selectedItem.scrollIntoView({
+                        behavior: 'instant',
+                        block: 'center',
+                    });
+                }
             });
         }
-    });
+    };
 
     return (
         <PopoverContent
@@ -98,7 +103,7 @@ const SelectList = <T extends object>({
             {...popover}
         >
             <ListBox
-                ref={listBoxRef}
+                ref={handleListBoxRef}
                 layout="stack"
                 orientation="vertical"
                 className={composeTailwindRenderProps(
