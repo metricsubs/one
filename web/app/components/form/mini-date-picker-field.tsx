@@ -32,11 +32,13 @@ export function MiniDatePickerField({
             value={dateValue}
             onChange={handleChange}
             isDisabled={readonly}
+            isReadOnly={readonly}
+            className="max-h-max h-auto overflow-visible rounded-none"
+            showClearButton
         >
-            <FieldGroup className="shadow-none border-none inset-ring-0 ring-0 focus-within:ring-0 focus-within:inset-ring-0 focus-within:border-none w-auto h-auto">
+            <FieldGroup className="shadow-none border-none inset-ring-0 ring-0 focus-within:ring-0 focus-within:inset-ring-0 focus-within:border-none w-auto h-auto max-h-max rounded-none overflow-visible">
                 <Button
                     intent="plain"
-                    size="sm"
                     className={cn(
                         dateValue ? 'text-fg' : 'text-muted-fg',
                         className

@@ -28,33 +28,47 @@ interface DatePickerOverlayProps extends Omit<PopoverProps, 'children'> {
     range?: boolean;
     visibleDuration?: DateDuration;
     pageBehavior?: 'visible' | 'single';
+    showClearButton?: boolean;
+    onClear?: () => void;
 }
 
 const DatePickerOverlay = ({
     visibleDuration = { months: 1 },
     pageBehavior = 'visible',
     range,
+    showClearButton,
+    onClear,
     ...props
 }: DatePickerOverlayProps) => {
     const isMobile = useMediaQuery('(max-width: 767px)');
+
+    const clearButton = showClearButton ? (
+        <Button className="w-full" intent="outline" size="sm" onClick={onClear}>
+            Clear selection
+        </Button>
+    ) : null;
+
     return isMobile ? (
         <Modal.Content aria-label="Date picker" closeButton={false}>
-            <div className="flex justify-center p-6">
-                {range ? (
-                    <RangeCalendar
-                        pageBehavior={pageBehavior}
-                        visibleDuration={visibleDuration}
-                    />
-                ) : (
-                    <Calendar />
-                )}
+            <div className="flex flex-col gap-y-2 justify-center items-center p-6">
+                <div className="flex justify-center">
+                    {range ? (
+                        <RangeCalendar
+                            pageBehavior={pageBehavior}
+                            visibleDuration={visibleDuration}
+                        />
+                    ) : (
+                        <Calendar />
+                    )}
+                </div>
+                {clearButton}
             </div>
         </Modal.Content>
     ) : (
         <PopoverContent
             showArrow={false}
             className={twJoin(
-                'flex min-w-auto max-w-none snap-x justify-center p-4 sm:min-w-[16.5rem] sm:p-2 sm:pt-3',
+                'flex min-w-auto max-w-none snap-x justify-center p-4 sm:min-w-[16.5rem] sm:p-2 sm:pt-3 flex-col gap-y-2 items-center',
                 visibleDuration?.months === 1 ? 'sm:max-w-2xs' : 'sm:max-w-none'
             )}
             {...props}
@@ -67,6 +81,7 @@ const DatePickerOverlay = ({
             ) : (
                 <Calendar />
             )}
+            {clearButton}
         </PopoverContent>
     );
 };
@@ -86,6 +101,7 @@ interface DatePickerProps<T extends DateValue>
         Pick<DatePickerOverlayProps, 'placement'>,
         Omit<FieldProps, 'placeholder'> {
     children?: React.ReactNode;
+    showClearButton?: boolean;
 }
 
 const DatePicker = <T extends DateValue>({
@@ -95,8 +111,13 @@ const DatePicker = <T extends DateValue>({
     errorMessage,
     placement,
     children,
+    showClearButton,
     ...props
 }: DatePickerProps<T>) => {
+    const handleClear = () => {
+        props.onChange?.(null);
+    };
+
     return (
         <DatePickerPrimitive
             {...props}
@@ -116,7 +137,11 @@ const DatePicker = <T extends DateValue>({
             )}
             {description && <Description>{description}</Description>}
             <FieldError>{errorMessage}</FieldError>
-            <DatePickerOverlay placement={placement} />
+            <DatePickerOverlay
+                placement={placement}
+                showClearButton={showClearButton}
+                onClear={handleClear}
+            />
         </DatePickerPrimitive>
     );
 };
