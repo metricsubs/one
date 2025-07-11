@@ -1,3 +1,5 @@
+"use client"
+
 import type {
   DialogTriggerProps,
   PopoverProps as PopoverPrimitiveProps,
@@ -89,5 +91,5 @@ Popover.Footer = PopoverFooter
 Popover.Header = PopoverHeader
 Popover.Title = PopoverTitle
 
+export type { PopoverProps, PopoverContentProps }
 export { Popover, PopoverContent }
-export type { PopoverContentProps, PopoverProps }

@@ -20,6 +20,8 @@ export const vProjectPriority = v.union(
     v.literal('high')
 );
 
+export type ProjectPriority = typeof vProjectPriority.type;
+
 const schema = defineSchema({
     // Your other tables...
     projects: defineTable({

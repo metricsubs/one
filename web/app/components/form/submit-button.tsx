@@ -15,7 +15,7 @@ export function SubmitButton(props: SubmitButtonProps) {
                     {...props}
                     type="submit"
                     isDisabled={isSubmitting || props.isDisabled}
-                    isPending
+                    isPending={isSubmitting}
                 >
                     {isSubmitting && (
                         <LuLoaderCircle className="w-4 h-4 animate-spin" />

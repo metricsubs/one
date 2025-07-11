@@ -1,9 +1,11 @@
+"use client"
+
 import {
   Button as ButtonPrimitive,
   type ButtonProps as ButtonPrimitiveProps,
   composeRenderProps,
 } from "react-aria-components"
-import { type VariantProps, tv } from "tailwind-variants"
+import { tv, type VariantProps } from "tailwind-variants"
 
 const buttonStyles = tv({
   base: [
@@ -79,7 +81,7 @@ const buttonStyles = tv({
   compoundVariants: [
     {
       size: ["xs", "sq-xs"],
-      className: "rounded-md *:data-[slot=icon]:size-3",
+      className: "rounded-md *:data-[slot=icon]:size-3.5",
     },
   ],
 })
@@ -110,5 +112,5 @@ const Button = ({ className, intent, size, isCircle, ref, ...props }: ButtonProp
   )
 }
 
-export { Button, buttonStyles }
 export type { ButtonProps }
+export { Button, buttonStyles }

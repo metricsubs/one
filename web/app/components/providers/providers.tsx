@@ -1,4 +1,6 @@
+import { Provider as JotaiProvider } from 'jotai';
 import { ConvexClerkProviders } from './convex-clerk-providers';
+import { ModalProvider } from './modal-provider';
 import {
     PostHogProvider,
     PostHugUserIdentityProvider,
@@ -7,14 +9,16 @@ import { ThemeProvider } from './theme-provider';
 
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
-        <PostHogProvider>
-            <ThemeProvider>
-                <ConvexClerkProviders>
-                    <PostHugUserIdentityProvider>
-                        {children}
-                    </PostHugUserIdentityProvider>
-                </ConvexClerkProviders>
-            </ThemeProvider>
-        </PostHogProvider>
+        <JotaiProvider>
+            <PostHogProvider>
+                <ThemeProvider>
+                    <ConvexClerkProviders>
+                        <PostHugUserIdentityProvider>
+                            <ModalProvider>{children}</ModalProvider>
+                        </PostHugUserIdentityProvider>
+                    </ConvexClerkProviders>
+                </ThemeProvider>
+            </PostHogProvider>
+        </JotaiProvider>
     );
 }
