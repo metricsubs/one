@@ -1,7 +1,7 @@
 import { fromAbsolute, ZonedDateTime } from '@internationalized/date';
 import { cn } from '~/lib/cn';
 import { formatDate } from '~/lib/format';
-import { Button, DatePicker, FieldGroup } from '../ui';
+import { Button, DatePicker, FieldGroup, Label } from '../ui';
 import { useFieldContext } from './form-context';
 
 export interface MiniDatePickerFieldProps {
@@ -36,7 +36,7 @@ export function MiniDatePickerField({
             className="max-h-max h-auto overflow-visible rounded-none"
             showClearButton={!isReadonly && !!dateValue}
         >
-            <FieldGroup className="shadow-none border-none inset-ring-0 ring-0 focus-within:ring-0 focus-within:inset-ring-0 focus-within:border-none w-auto h-auto max-h-max rounded-none overflow-visible">
+            <FieldGroup className="shadow-none border-none inset-ring-0 ring-0 focus-within:ring-0 focus-within:inset-ring-0 focus-within:border-none w-auto h-auto max-h-max rounded-none overflow-visible *:[button]:rounded-lg *:[button]:px-2 *:[button]:py-2 *:[button]:sm:px-2 *:[button]:sm:py-1">
                 <Button
                     intent="plain"
                     className={cn(
@@ -45,7 +45,11 @@ export function MiniDatePickerField({
                     )}
                     isDisabled={isReadonly}
                 >
-                    {dateValue ? formatDate(dateValue.toDate()) : placeholder}
+                    <Label className="text-sm">
+                        {dateValue
+                            ? formatDate(dateValue.toDate())
+                            : placeholder}
+                    </Label>
                 </Button>
             </FieldGroup>
         </DatePicker>
