@@ -123,6 +123,7 @@ export function CreateProjectDialog() {
                                 <field.TextAreaField
                                     label="Description"
                                     placeholder="Project Description"
+                                    className="min-h-30"
                                 />
                             )}
                         </form.AppField>
@@ -145,7 +146,7 @@ export function CreateProjectDialog() {
                 <Modal.Footer className="w-full flex flex-col justify-between sm:flex-row">
                     <div className="flex flex-row gap-2 items-center w-full sm:w-auto">
                         <div className="flex flex-row items-center gap-1">
-                            <FaArrowUpWideShort className="h-3.5 w-3.5 shrink-0" />
+                            <FaArrowUpWideShort className="h-3.7 w-3.7 shrink-0" />
                             <form.AppField name="priority">
                                 {(field) => (
                                     <field.PriorityPickerField className="px-1.5" />
@@ -156,7 +157,7 @@ export function CreateProjectDialog() {
                             <Separator orientation="vertical" />
                         </div>
                         <div className="flex flex-row items-center gap-0.5">
-                            <LuClock className="h-4 w-4" />
+                            <LuClock className="h-4 w-4 shrink-0" />
                             <form.AppField name="dueDate">
                                 {(field) => (
                                     <field.MiniDatePickerField placeholder="Due Date" />

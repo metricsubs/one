@@ -39,13 +39,15 @@ export function MiniDatePickerField({
             <FieldGroup className="shadow-none border-none inset-ring-0 ring-0 focus-within:ring-0 focus-within:inset-ring-0 focus-within:border-none w-auto h-auto max-h-max rounded-none overflow-visible *:[button]:rounded-lg *:[button]:px-2 *:[button]:py-2 *:[button]:sm:px-2 *:[button]:sm:py-1">
                 <Button
                     intent="plain"
-                    className={cn(
-                        dateValue ? 'text-fg' : 'text-muted-fg',
-                        className
-                    )}
+                    className={className}
                     isDisabled={isReadonly}
                 >
-                    <Label className="text-sm">
+                    <Label
+                        className={cn(
+                            'text-sm',
+                            dateValue ? 'text-fg' : 'text-muted-fg'
+                        )}
+                    >
                         {dateValue
                             ? formatDate(dateValue.toDate())
                             : placeholder}

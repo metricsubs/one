@@ -31,20 +31,20 @@ export function ThemeToggle() {
                 selectedKeys={[theme]}
                 onSelectionChange={handleSelectionChange}
             >
-                <Menu.Item id="light">
-                    <Menu.Label className="flex items-center justify-between">
+                <Menu.Item id="light" className="flex">
+                    <Menu.Label className="flex items-center justify-between w-full">
                         Light
                         <LuSun className="text-muted-fg" />
                     </Menu.Label>
                 </Menu.Item>
-                <Menu.Item id="dark">
-                    <Menu.Label className="flex items-center justify-between">
+                <Menu.Item id="dark" className="flex">
+                    <Menu.Label className="flex items-center justify-between w-full">
                         Dark
                         <LuMoon className="text-muted-fg" />
                     </Menu.Label>
                 </Menu.Item>
-                <Menu.Item id="system">
-                    <Menu.Label className="flex items-center justify-between">
+                <Menu.Item id="system" className="flex">
+                    <Menu.Label className="flex items-center justify-between w-full">
                         System
                         <LuMonitor className="text-muted-fg" />
                     </Menu.Label>
