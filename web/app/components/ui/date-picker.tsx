@@ -1,4 +1,4 @@
-import { IconCalendarDays } from '@intentui/icons';
+import { IconCalendarDays, IconTrash } from '@intentui/icons';
 import type { DateDuration } from '@internationalized/date';
 import {
     DatePicker as DatePickerPrimitive,
@@ -13,6 +13,7 @@ import { composeTailwindRenderProps } from '~/lib/primitive';
 import { Button } from './button';
 import { Calendar } from './calendar';
 import { DateInput } from './date-field';
+import { Dialog, DialogClose } from './dialog';
 import {
     Description,
     FieldError,
@@ -21,7 +22,7 @@ import {
     Label,
 } from './field';
 import { Modal } from './modal';
-import { PopoverContent } from './popover';
+import { Popover, PopoverContent } from './popover';
 import { RangeCalendar } from './range-calendar';
 
 interface DatePickerOverlayProps extends Omit<PopoverProps, 'children'> {
@@ -42,12 +43,6 @@ const DatePickerOverlay = ({
 }: DatePickerOverlayProps) => {
     const isMobile = useMediaQuery('(max-width: 767px)');
 
-    const clearButton = showClearButton ? (
-        <Button className="w-full" intent="outline" size="sm" onClick={onClear}>
-            Clear selection
-        </Button>
-    ) : null;
-
     return isMobile ? (
         <Modal.Content aria-label="Date picker" closeButton={false}>
             <div className="flex flex-col gap-y-2 justify-center items-center p-6">
@@ -61,7 +56,17 @@ const DatePickerOverlay = ({
                         <Calendar />
                     )}
                 </div>
-                {clearButton}
+                {showClearButton ? (
+                    <DialogClose
+                        className="w-full flex items-center gap-x-2"
+                        intent="outline"
+                        size="sm"
+                        onClick={onClear}
+                    >
+                        <IconTrash className="size-2" />
+                        Clear Selection
+                    </DialogClose>
+                ) : null}
             </div>
         </Modal.Content>
     ) : (
@@ -73,15 +78,28 @@ const DatePickerOverlay = ({
             )}
             {...props}
         >
-            {range ? (
-                <RangeCalendar
-                    pageBehavior={pageBehavior}
-                    visibleDuration={visibleDuration}
-                />
-            ) : (
-                <Calendar />
-            )}
-            {clearButton}
+            <Dialog>
+                {range ? (
+                    <RangeCalendar
+                        pageBehavior={pageBehavior}
+                        visibleDuration={visibleDuration}
+                    />
+                ) : (
+                    <Calendar />
+                )}
+                {showClearButton ? (
+                    <Popover.Close
+                        slot="close"
+                        className="w-full mt-2 flex items-center gap-x-2"
+                        intent="outline"
+                        size="sm"
+                        onClick={onClear}
+                    >
+                        <IconTrash className="size-2" />
+                        Clear Selection
+                    </Popover.Close>
+                ) : null}
+            </Dialog>
         </PopoverContent>
     );
 };

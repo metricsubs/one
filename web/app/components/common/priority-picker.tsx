@@ -7,14 +7,14 @@ const PRIORITY_TAGS: ProjectPriority[] = ['low', 'medium', 'high'];
 export interface PriorityPickerProps {
     className?: string;
     priority?: ProjectPriority | null;
-    readonly?: boolean;
+    isReadonly?: boolean;
     onChange?: (priority: ProjectPriority | null) => void;
 }
 
 export function PriorityPicker({
     className,
     priority,
-    readonly,
+    isReadonly,
     onChange,
 }: PriorityPickerProps) {
     const onPriorityChange = (item: ProjectPriority | null) => {
@@ -42,7 +42,7 @@ export function PriorityPicker({
                     priority ? 'text-secondary-fg' : 'text-muted-fg',
                     className
                 )}
-                isDisabled={readonly}
+                isDisabled={isReadonly}
             >
                 <PriorityTag priority={priority} />
             </Button>

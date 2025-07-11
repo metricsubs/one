@@ -1,5 +1,6 @@
 import { createFormHook } from '@tanstack/react-form';
 import { CheckboxField } from './checkbox-field';
+import { FileDropzoneField } from './file-dropzone-field';
 import { fieldContext, formContext } from './form-context';
 import { MiniDatePickerField } from './mini-date-picker-field';
 import { PriorityPickerField } from './priority-picker-field';
@@ -14,6 +15,7 @@ export const { useAppForm } = createFormHook({
         TextField,
         TextAreaField,
         CheckboxField,
+        FileDropzoneField,
         PriorityPickerField,
         MiniDatePickerField,
     },

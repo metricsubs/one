@@ -6,14 +6,14 @@ import { Modal, Separator } from '~/components/ui';
 import { createProjectDialogOpenAtom } from '~/core/store/project';
 import { checkValidYoutubeUrl } from '~/lib/format';
 import { useAppForm } from '../form/app-form';
+import type { FileDropzoneFieldFileInfo } from '../form/file-dropzone-field';
 
 interface ProjectFormData {
     title: string;
     description: string;
     youtubeUrl: string;
-    thumbnailFile: File | null;
-    video4kFile: File | null;
-    video1080pFile: File | null;
+    thumbnailFileInfo: FileDropzoneFieldFileInfo | null;
+    video4kFileInfo: FileDropzoneFieldFileInfo | null;
     shouldKickOffSystemPrepping: boolean;
     priority: ProjectPriority | null;
     dueDate: number | null;
@@ -23,9 +23,8 @@ const defaultProjectFormData: ProjectFormData = {
     title: '',
     description: '',
     youtubeUrl: '',
-    thumbnailFile: null,
-    video4kFile: null,
-    video1080pFile: null,
+    thumbnailFileInfo: null,
+    video4kFileInfo: null,
     shouldKickOffSystemPrepping: true,
     priority: null,
     dueDate: null,
@@ -127,16 +126,11 @@ export function CreateProjectDialog() {
                                 />
                             )}
                         </form.AppField>
-                        {/* <form.AppField name="video4kFileKey">
+                        <form.AppField name="video4kFileInfo">
                             {(field) => (
-                                <field.LargeFileUploaderField label="Video 4K or Best Quality" />
+                                <field.FileDropzoneField label="Video 4K or Best Quality" />
                             )}
                         </form.AppField>
-                        <form.AppField name="video1080pFileKey">
-                            {(field) => (
-                                <field.LargeFileUploaderField label="Video 1080p" />
-                            )}
-                        </form.AppField> */}
                         {/* <TagSelector tagIds={[]} onChange={() => {}} /> */}
                         <form.AppField name="shouldKickOffSystemPrepping">
                             {(field) => (
@@ -161,14 +155,11 @@ export function CreateProjectDialog() {
                         <div className="h-4 mr-1">
                             <Separator orientation="vertical" />
                         </div>
-                        <div className="flex flex-row items-center gap-1">
+                        <div className="flex flex-row items-center gap-0.5">
                             <LuClock className="h-4 w-4" />
                             <form.AppField name="dueDate">
                                 {(field) => (
-                                    <field.MiniDatePickerField
-                                        className="px-1"
-                                        placeholder="Due Date"
-                                    />
+                                    <field.MiniDatePickerField placeholder="Due Date" />
                                 )}
                             </form.AppField>
                         </div>

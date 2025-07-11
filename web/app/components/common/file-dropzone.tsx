@@ -2,6 +2,7 @@ import { HiCloudArrowUp } from 'react-icons/hi2';
 import { cn } from '~/lib/cn';
 
 export interface FileDropZoneProps {
+    id?: string;
     className?: string;
     inputRef?: React.RefObject<HTMLInputElement>;
     icon?: React.ReactNode;
@@ -13,7 +14,7 @@ export interface FileDropZoneProps {
 }
 
 export default function FileDropZone(props: FileDropZoneProps) {
-    const { onFileUpload, inputRef, disabled } = props;
+    const { id, onFileUpload, inputRef, disabled } = props;
 
     const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const input = e.target;
@@ -32,7 +33,7 @@ export default function FileDropZone(props: FileDropZoneProps) {
             )}
         >
             <label
-                htmlFor="dropzone-file"
+                htmlFor={id}
                 className={cn(
                     'border-border h-full flex w-full flex-col items-center justify-center rounded-lg border-2 border-dashed p-4',
                     disabled
@@ -54,7 +55,7 @@ export default function FileDropZone(props: FileDropZoneProps) {
                     )}
                 </div>
                 <input
-                    id="dropzone-file"
+                    id={id}
                     ref={inputRef}
                     type="file"
                     accept={props.accept}

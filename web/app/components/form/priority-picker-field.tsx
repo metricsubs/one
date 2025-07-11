@@ -4,12 +4,12 @@ import { useFieldContext } from './form-context';
 
 export interface PriorityPickerFieldProps {
     className?: string;
-    readonly?: boolean;
+    isReadonly?: boolean;
 }
 
 export function PriorityPickerField({
     className,
-    readonly,
+    isReadonly,
 }: PriorityPickerFieldProps) {
     const field = useFieldContext<ProjectPriority | null>();
 
@@ -17,7 +17,7 @@ export function PriorityPickerField({
         <PriorityPicker
             className={className}
             priority={field.state.value}
-            readonly={readonly}
+            isReadonly={isReadonly}
             onChange={field.handleChange}
         />
     );

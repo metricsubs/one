@@ -6,7 +6,7 @@ import { useFieldContext } from './form-context';
 
 export interface MiniDatePickerFieldProps {
     className?: string;
-    readonly?: boolean;
+    isReadonly?: boolean;
     placeholder?: string;
 }
 
@@ -14,7 +14,7 @@ const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 export function MiniDatePickerField({
     className,
-    readonly,
+    isReadonly,
     placeholder,
 }: MiniDatePickerFieldProps) {
     const field = useFieldContext<number | null>();
@@ -31,10 +31,10 @@ export function MiniDatePickerField({
         <DatePicker
             value={dateValue}
             onChange={handleChange}
-            isDisabled={readonly}
-            isReadOnly={readonly}
+            isDisabled={isReadonly}
+            isReadOnly={isReadonly}
             className="max-h-max h-auto overflow-visible rounded-none"
-            showClearButton
+            showClearButton={!isReadonly && !!dateValue}
         >
             <FieldGroup className="shadow-none border-none inset-ring-0 ring-0 focus-within:ring-0 focus-within:inset-ring-0 focus-within:border-none w-auto h-auto max-h-max rounded-none overflow-visible">
                 <Button
@@ -43,7 +43,7 @@ export function MiniDatePickerField({
                         dateValue ? 'text-fg' : 'text-muted-fg',
                         className
                     )}
-                    isDisabled={readonly}
+                    isDisabled={isReadonly}
                 >
                     {dateValue ? formatDate(dateValue.toDate()) : placeholder}
                 </Button>
