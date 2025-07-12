@@ -188,7 +188,6 @@ export function TagInput({ tagNames, onChange }: TagInputProps) {
                 // Only prevent default if we have a focused tag to select
                 if (focusedIndex >= 0 && focusedIndex < filteredTags.length) {
                     event.preventDefault();
-                    event.stopPropagation();
                     handleTagSelect(filteredTags[focusedIndex]);
                 }
                 break;

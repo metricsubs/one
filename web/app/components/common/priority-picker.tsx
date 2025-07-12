@@ -54,7 +54,11 @@ export function PriorityPicker({
                     Priority
                 </Select.Option>
                 {PRIORITY_TAGS.map((priority) => (
-                    <Select.Option id={priority} textValue={priority}>
+                    <Select.Option
+                        id={priority}
+                        textValue={priority}
+                        key={priority}
+                    >
                         <PriorityTag priority={priority} />
                     </Select.Option>
                 ))}
