@@ -17,6 +17,7 @@ interface ProjectFormData {
     shouldKickOffSystemPrepping: boolean;
     priority: ProjectPriority | null;
     dueDate: number | null;
+    tags: string[];
 }
 
 const defaultProjectFormData: ProjectFormData = {
@@ -28,6 +29,7 @@ const defaultProjectFormData: ProjectFormData = {
     shouldKickOffSystemPrepping: true,
     priority: null,
     dueDate: null,
+    tags: [],
 };
 
 export function CreateProjectDialog() {
@@ -132,7 +134,9 @@ export function CreateProjectDialog() {
                                 <field.FileDropzoneField label="Video 4K or Best Quality" />
                             )}
                         </form.AppField>
-                        {/* <TagSelector tagIds={[]} onChange={() => {}} /> */}
+                        <form.AppField name="tags">
+                            {(field) => <field.TagInputField label="Tags" />}
+                        </form.AppField>
                         <form.AppField name="shouldKickOffSystemPrepping">
                             {(field) => (
                                 <field.CheckboxField

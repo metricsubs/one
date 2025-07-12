@@ -5,6 +5,7 @@ import { fieldContext, formContext } from './form-context';
 import { MiniDatePickerField } from './mini-date-picker-field';
 import { PriorityPickerField } from './priority-picker-field';
 import { SubmitButton } from './submit-button';
+import { TagInputField } from './tag-input-field';
 import { TextAreaField } from './text-area-field';
 import { TextField } from './text-field';
 
@@ -16,6 +17,7 @@ export const { useAppForm } = createFormHook({
         TextAreaField,
         CheckboxField,
         FileDropzoneField,
+        TagInputField,
         PriorityPickerField,
         MiniDatePickerField,
     },

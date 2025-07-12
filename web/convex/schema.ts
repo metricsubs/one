@@ -1,5 +1,6 @@
 import { defineSchema, defineTable } from 'convex/server';
 import { v } from 'convex/values';
+import type { Doc } from './_generated/dataModel';
 
 export const vProjectStatus = v.union(
     v.literal('system-pending'),
@@ -55,5 +56,7 @@ const schema = defineSchema({
         document: v.bytes(),
     }).index('by_project_id', ['projectId']),
 });
+
+export type Tag = Doc<'tags'>;
 
 export default schema;
