@@ -158,11 +158,16 @@ export function TagInput({ tagNames, onChange }: TagInputProps) {
         const shouldShowPopup =
             inputValue.length > 0 && filteredTags.length > 0;
 
+        // Always handle Escape to clear input
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            setInputValue('');
+            setFocusedIndex(-1);
+            return;
+        }
+
+        // Only handle arrow keys and Enter when popup is showing
         if (!shouldShowPopup) {
-            if (event.key === 'Escape') {
-                setInputValue('');
-                setFocusedIndex(-1);
-            }
             return;
         }
 
@@ -180,15 +185,11 @@ export function TagInput({ tagNames, onChange }: TagInputProps) {
                 );
                 break;
             case 'Enter':
-                event.preventDefault();
+                // Only prevent default if we have a focused tag to select
                 if (focusedIndex >= 0 && focusedIndex < filteredTags.length) {
+                    event.preventDefault();
                     handleTagSelect(filteredTags[focusedIndex]);
                 }
-                break;
-            case 'Escape':
-                event.preventDefault();
-                setInputValue('');
-                setFocusedIndex(-1);
                 break;
         }
     };
@@ -242,11 +243,12 @@ export function TagInput({ tagNames, onChange }: TagInputProps) {
 
     return (
         <div className="relative">
-            <div ref={triggerRef} onKeyDown={handleKeyDown}>
+            <div ref={triggerRef}>
                 <TagField
                     list={listData}
                     inputValue={inputValue}
                     onInputChange={setInputValue}
+                    onKeyDown={handleKeyDown}
                     onItemCleared={(item) => {
                         if (!item) return;
                         const newTagNames = tagNames.filter(

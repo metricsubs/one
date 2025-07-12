@@ -43,6 +43,7 @@ interface TagFieldProps extends FieldProps {
     onItemCleared?: (tag: TagItemProps | undefined) => void;
     appearance?: 'outline' | 'plain';
     'aria-label'?: string;
+    onKeyDown?: (e: React.KeyboardEvent) => void;
 }
 
 const TagField = ({
@@ -55,6 +56,7 @@ const TagField = ({
     onItemCleared,
     onItemInserted,
     onInputChange,
+    onKeyDown: customOnKeyDown,
     ...props
 }: TagFieldProps) => {
     const [isInvalid, setIsInvalid] = useState(false);
@@ -120,6 +122,17 @@ const TagField = ({
     };
 
     const onKeyDown = (e: React.KeyboardEvent) => {
+        // Call custom onKeyDown handler first if provided
+        if (customOnKeyDown) {
+            customOnKeyDown(e);
+        }
+
+        // Only handle default TagField behavior if the event wasn't already handled
+        if (e.defaultPrevented) {
+            return;
+        }
+
+        // Handle default TagField behavior
         if (e.key === 'Enter' || e.key === ',') {
             e.preventDefault();
             insertTag();
