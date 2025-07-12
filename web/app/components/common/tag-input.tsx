@@ -188,6 +188,7 @@ export function TagInput({ tagNames, onChange }: TagInputProps) {
                 // Only prevent default if we have a focused tag to select
                 if (focusedIndex >= 0 && focusedIndex < filteredTags.length) {
                     event.preventDefault();
+                    event.stopPropagation();
                     handleTagSelect(filteredTags[focusedIndex]);
                 }
                 break;
@@ -249,6 +250,14 @@ export function TagInput({ tagNames, onChange }: TagInputProps) {
                     inputValue={inputValue}
                     onInputChange={setInputValue}
                     onKeyDown={handleKeyDown}
+                    shouldPreventDefaultEnter={() => {
+                        // Prevent default Enter if we have a popup showing and a focused tag
+                        return (
+                            shouldShowPopup &&
+                            focusedIndex >= 0 &&
+                            focusedIndex < filteredTags.length
+                        );
+                    }}
                     onItemCleared={(item) => {
                         if (!item) return;
                         const newTagNames = tagNames.filter(
