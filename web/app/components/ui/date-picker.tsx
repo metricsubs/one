@@ -46,7 +46,42 @@ const DatePickerOverlay = ({
     return isMobile ? (
         <Modal.Content aria-label="Date picker" closeButton={false}>
             <div className="flex flex-col gap-y-2 justify-center items-center p-6">
-                <div className="flex justify-center">
+                <div className="flex flex-col gap-y-2 items-center">
+                    <div className="flex justify-center">
+                        {range ? (
+                            <RangeCalendar
+                                pageBehavior={pageBehavior}
+                                visibleDuration={visibleDuration}
+                            />
+                        ) : (
+                            <Calendar />
+                        )}
+                    </div>
+                    {showClearButton ? (
+                        <DialogClose
+                            className="w-full flex items-center justify-center gap-x-2"
+                            intent="outline"
+                            size="sm"
+                            onClick={onClear}
+                        >
+                            <IconTrash className="size-2" />
+                            Clear Selection
+                        </DialogClose>
+                    ) : null}
+                </div>
+            </div>
+        </Modal.Content>
+    ) : (
+        <PopoverContent
+            showArrow={false}
+            className={twJoin(
+                'flex min-w-auto max-w-none snap-x justify-center p-4 sm:min-w-[16.5rem] sm:p-2 sm:pt-3',
+                visibleDuration?.months === 1 ? 'sm:max-w-2xs' : 'sm:max-w-none'
+            )}
+            {...props}
+        >
+            <Dialog className="flex flex-col gap-y-2 items-center">
+                <div>
                     {range ? (
                         <RangeCalendar
                             pageBehavior={pageBehavior}
@@ -57,40 +92,9 @@ const DatePickerOverlay = ({
                     )}
                 </div>
                 {showClearButton ? (
-                    <DialogClose
-                        className="w-full flex items-center gap-x-2"
-                        intent="outline"
-                        size="sm"
-                        onClick={onClear}
-                    >
-                        <IconTrash className="size-2" />
-                        Clear Selection
-                    </DialogClose>
-                ) : null}
-            </div>
-        </Modal.Content>
-    ) : (
-        <PopoverContent
-            showArrow={false}
-            className={twJoin(
-                'flex min-w-auto max-w-none snap-x justify-center p-4 sm:min-w-[16.5rem] sm:p-2 sm:pt-3 flex-col gap-y-2 items-center',
-                visibleDuration?.months === 1 ? 'sm:max-w-2xs' : 'sm:max-w-none'
-            )}
-            {...props}
-        >
-            <Dialog>
-                {range ? (
-                    <RangeCalendar
-                        pageBehavior={pageBehavior}
-                        visibleDuration={visibleDuration}
-                    />
-                ) : (
-                    <Calendar />
-                )}
-                {showClearButton ? (
                     <Popover.Close
                         slot="close"
-                        className="w-full mt-2 flex items-center gap-x-2"
+                        className="w-full flex items-center justify-center gap-x-2"
                         intent="outline"
                         size="sm"
                         onClick={onClear}
