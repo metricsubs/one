@@ -124,7 +124,7 @@ export function FilePreviewItem({
 }
 
 export interface FileIconProps {
-    fileType: FileType;
+    fileType?: FileType | null | undefined;
     className?: string;
 }
 
@@ -141,6 +141,7 @@ export function FileIcon({ fileType, className }: FileIconProps) {
         case 'code':
             return <LuFileCode className={className} />;
         case 'other':
+        default:
             return <LuFile className={className} />;
     }
 }

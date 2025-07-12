@@ -17,9 +17,13 @@ export type FileType =
     | 'other';
 
 export const getFileTypeFromMetadata = (
-    key: string,
+    key?: string | null | undefined,
     contentType?: string | null
 ): FileType => {
+    if (!key) {
+        return 'other';
+    }
+
     let newContentType: string | null = contentType?.trim() || null;
 
     if (!contentType) {

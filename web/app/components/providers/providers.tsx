@@ -5,6 +5,7 @@ import {
     PostHogProvider,
     PostHugUserIdentityProvider,
 } from './posthug-providers';
+import { ReactQueryProvider } from './react-query-provider';
 import { ThemeProvider } from './theme-provider';
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -14,7 +15,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 <ThemeProvider>
                     <ConvexClerkProviders>
                         <PostHugUserIdentityProvider>
-                            <ModalProvider>{children}</ModalProvider>
+                            <ReactQueryProvider>
+                                <ModalProvider>{children}</ModalProvider>
+                            </ReactQueryProvider>
                         </PostHugUserIdentityProvider>
                     </ConvexClerkProviders>
                 </ThemeProvider>

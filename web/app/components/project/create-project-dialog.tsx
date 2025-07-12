@@ -7,12 +7,13 @@ import { createProjectDialogOpenAtom } from '~/core/store/project';
 import { checkValidYoutubeUrl } from '~/lib/format';
 import { useAppForm } from '../form/app-form';
 import type { FileDropzoneFieldFileInfo } from '../form/file-dropzone-field';
+import type { ThumbnailPickerFieldState } from '../form/thumbnail-picker-field';
 
 interface ProjectFormData {
     title: string;
     description: string;
     youtubeUrl: string;
-    thumbnailFileInfo: FileDropzoneFieldFileInfo | null;
+    thumbnailFileInfo: ThumbnailPickerFieldState | null;
     video4kFileInfo: FileDropzoneFieldFileInfo | null;
     shouldKickOffSystemPrepping: boolean;
     priority: ProjectPriority | null;
@@ -114,11 +115,14 @@ export function CreateProjectDialog() {
                                     )}
                                 </form.AppField>
                             </div>
-                            {/* <form.AppField name="thumbnailState">
+                            <form.AppField name="thumbnailFileInfo">
                                 {(field) => (
-                                    <field.ThumbnailUploaderField className="w-full sm:w-48" />
+                                    <field.ThumbnailPickerField
+                                        className="w-full sm:w-48"
+                                        label="Thumbnail"
+                                    />
                                 )}
-                            </form.AppField> */}
+                            </form.AppField>
                         </div>
                         <form.AppField name="description">
                             {(field) => (

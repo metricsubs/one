@@ -64,7 +64,7 @@ export function TagInput({ tagNames, onChange }: TagInputProps) {
         const maxItems = 8; // Maximum items to show before scrolling
         const actualItems = Math.min(filteredTags.length, maxItems);
         const estimatedHeight = headerHeight + actualItems * itemHeight;
-        const popoverHeight = Math.min(estimatedHeight, 320); // Max height
+        const popoverHeight = Math.min(estimatedHeight, 242); // Max height
 
         const spaceBelow = viewport.height - rect.bottom;
         const spaceAbove = rect.top;
@@ -199,7 +199,7 @@ export function TagInput({ tagNames, onChange }: TagInputProps) {
 
     const popup = shouldShowPopup ? (
         <div
-            className="fixed z-[9999] rounded-lg border bg-overlay text-overlay-fg shadow-lg"
+            className="fixed z-[9999] rounded-lg border bg-overlay/90 backdrop-blur-sm text-overlay-fg shadow-lg"
             style={{
                 top: position.top,
                 left: position.left,
@@ -210,13 +210,6 @@ export function TagInput({ tagNames, onChange }: TagInputProps) {
             onMouseDown={(e) => e.stopPropagation()}
             onClick={(e) => e.stopPropagation()}
         >
-            <div className="p-2 border-b">
-                <h3 className="font-semibold text-sm">Available Tags</h3>
-                <p className="text-xs text-muted-fg">
-                    Click to add • {filteredTags.length} match
-                    {filteredTags.length !== 1 ? 'es' : ''} • Use ↑↓ and Enter
-                </p>
-            </div>
             <div className="max-h-60 overflow-y-auto">
                 {filteredTags.map((tag, index) => (
                     <div

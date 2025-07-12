@@ -8,6 +8,7 @@ import { SubmitButton } from './submit-button';
 import { TagInputField } from './tag-input-field';
 import { TextAreaField } from './text-area-field';
 import { TextField } from './text-field';
+import { ThumbnailPickerField } from './thumbnail-picker-field';
 
 export const { useAppForm } = createFormHook({
     fieldContext,
@@ -16,6 +17,7 @@ export const { useAppForm } = createFormHook({
         TextField,
         TextAreaField,
         CheckboxField,
+        ThumbnailPickerField,
         FileDropzoneField,
         TagInputField,
         PriorityPickerField,
