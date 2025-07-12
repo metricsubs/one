@@ -1,7 +1,7 @@
 import { api } from 'convex/_generated/api';
 import { useQuery } from 'convex/react';
 import type { Tag } from 'convex/schema';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useListData } from 'react-stately';
 import { TagField } from '../ui';
@@ -24,14 +24,11 @@ export function TagInput({ tagNames, onChange }: TagInputProps) {
         if (!inputValue.trim()) return [];
 
         const searchTerm = inputValue.toLowerCase();
-        const selectedTagNames = new Set(
-            tagNames.map((name) => name.toLowerCase())
-        );
 
         return allTags.filter(
             (tag) =>
                 tag.name.toLowerCase().includes(searchTerm) &&
-                !selectedTagNames.has(tag.name.toLowerCase())
+                !tagNames.includes(tag.name)
         );
     }, [allTags, inputValue, tagNames]);
 
@@ -45,9 +42,15 @@ export function TagInput({ tagNames, onChange }: TagInputProps) {
 
     const triggerRef = useRef<HTMLDivElement>(null);
 
-    // Calculate position when input changes
-    useEffect(() => {
-        if (!triggerRef.current) return;
+    // Calculate position using useLayoutEffect to prevent flashing
+    useLayoutEffect(() => {
+        if (
+            !triggerRef.current ||
+            inputValue.length === 0 ||
+            filteredTags.length === 0
+        ) {
+            return;
+        }
 
         const rect = triggerRef.current.getBoundingClientRect();
         const viewport = {
@@ -55,19 +58,51 @@ export function TagInput({ tagNames, onChange }: TagInputProps) {
             height: window.innerHeight,
         };
 
-        const popoverHeight = Math.min(300, 200);
+        // Estimate popup height based on content
+        const headerHeight = 60; // Header with title and description
+        const itemHeight = 40; // Each tag item
+        const maxItems = 8; // Maximum items to show before scrolling
+        const actualItems = Math.min(filteredTags.length, maxItems);
+        const estimatedHeight = headerHeight + actualItems * itemHeight;
+        const popoverHeight = Math.min(estimatedHeight, 320); // Max height
+
         const spaceBelow = viewport.height - rect.bottom;
         const spaceAbove = rect.top;
+        const spacing = 8; // Gap between input and popup
 
+        // Determine if popup should go above or below
         const shouldPositionAbove =
-            spaceBelow < popoverHeight && spaceAbove > spaceBelow;
+            spaceBelow < popoverHeight + spacing && spaceAbove > spaceBelow;
+
+        let top: number;
+        if (shouldPositionAbove) {
+            // Position above with spacing
+            top = rect.top - popoverHeight - spacing;
+            // Ensure it doesn't go off-screen at the top
+            top = Math.max(spacing, top);
+        } else {
+            // Position below with spacing
+            top = rect.bottom + spacing;
+            // Ensure it doesn't go off-screen at the bottom
+            if (top + popoverHeight > viewport.height) {
+                top = viewport.height - popoverHeight - spacing;
+            }
+        }
+
+        // Ensure horizontal position stays within viewport
+        let left = rect.left;
+        const popupWidth = Math.max(rect.width, 200);
+        if (left + popupWidth > viewport.width) {
+            left = viewport.width - popupWidth - spacing;
+        }
+        left = Math.max(spacing, left);
 
         setPosition({
-            top: shouldPositionAbove ? rect.top - popoverHeight : rect.bottom,
-            left: rect.left,
+            top,
+            left,
             width: rect.width,
         });
-    }, [inputValue]);
+    }, [inputValue, filteredTags.length]);
 
     // Reset focused index when filtered tags change
     useEffect(() => {
@@ -76,24 +111,39 @@ export function TagInput({ tagNames, onChange }: TagInputProps) {
 
     // Handle tag selection - simplified
     const handleTagSelect = (tag: Tag) => {
-        console.log('🏷️ Tag selected:', tag.name);
-        const newTagNames = [...tagNames, tag.name];
-        console.log('🆕 Calling onChange with:', newTagNames);
-        onChange(newTagNames);
+        listData.append({
+            id: Date.now(),
+            name: tag.name,
+        });
         setInputValue('');
         setFocusedIndex(-1);
+        const newTagNames = [...tagNames, tag.name];
+        onChange(newTagNames);
     };
 
     // Handle clicks outside to close
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (
-                triggerRef.current &&
-                !triggerRef.current.contains(event.target as Node)
-            ) {
-                setInputValue('');
-                setFocusedIndex(-1);
+            const target = event.target as Node;
+
+            // Check if click is inside trigger
+            if (triggerRef.current?.contains(target)) {
+                return;
             }
+
+            // Check if click is inside popup (search in portaled content)
+            const popupElements = document.querySelectorAll(
+                '[style*="z-index: 9999"]'
+            );
+            for (const popup of popupElements) {
+                if (popup.contains(target)) {
+                    return;
+                }
+            }
+
+            // Click is outside - close popup
+            setInputValue('');
+            setFocusedIndex(-1);
         };
 
         if (inputValue.length > 0) {
@@ -118,21 +168,18 @@ export function TagInput({ tagNames, onChange }: TagInputProps) {
 
         switch (event.key) {
             case 'ArrowDown':
-                console.log('⬇️ Arrow down');
                 event.preventDefault();
                 setFocusedIndex((prev) =>
                     prev < filteredTags.length - 1 ? prev + 1 : 0
                 );
                 break;
             case 'ArrowUp':
-                console.log('⬆️ Arrow up');
                 event.preventDefault();
                 setFocusedIndex((prev) =>
                     prev > 0 ? prev - 1 : filteredTags.length - 1
                 );
                 break;
             case 'Enter':
-                console.log('↩️ Enter pressed');
                 event.preventDefault();
                 if (focusedIndex >= 0 && focusedIndex < filteredTags.length) {
                     handleTagSelect(filteredTags[focusedIndex]);
@@ -159,12 +206,14 @@ export function TagInput({ tagNames, onChange }: TagInputProps) {
                 maxHeight: '300px',
                 overflow: 'hidden',
             }}
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
         >
             <div className="p-2 border-b">
                 <h3 className="font-semibold text-sm">Available Tags</h3>
                 <p className="text-xs text-muted-fg">
                     Click to add • {filteredTags.length} match
-                    {filteredTags.length !== 1 ? 'es' : ''}
+                    {filteredTags.length !== 1 ? 'es' : ''} • Use ↑↓ and Enter
                 </p>
             </div>
             <div className="max-h-60 overflow-y-auto">
@@ -176,8 +225,9 @@ export function TagInput({ tagNames, onChange }: TagInputProps) {
                                 ? 'bg-accent text-accent-fg'
                                 : 'hover:bg-accent hover:text-accent-fg'
                         }`}
-                        onClick={() => {
-                            console.log('🖱️ Tag clicked:', tag.name);
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
                             handleTagSelect(tag);
                         }}
                         onMouseEnter={() => setFocusedIndex(index)}
@@ -197,6 +247,18 @@ export function TagInput({ tagNames, onChange }: TagInputProps) {
                     list={listData}
                     inputValue={inputValue}
                     onInputChange={setInputValue}
+                    onItemCleared={(item) => {
+                        if (!item) return;
+                        const newTagNames = tagNames.filter(
+                            (tagName) => tagName !== item.name
+                        );
+                        onChange(newTagNames);
+                    }}
+                    onItemInserted={(item) => {
+                        if (!item) return;
+                        const newTagNames = [...tagNames, item.name];
+                        onChange(newTagNames);
+                    }}
                 />
             </div>
             {typeof document !== 'undefined' &&

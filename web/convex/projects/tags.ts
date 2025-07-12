@@ -7,17 +7,27 @@ export const getTags = query({
     args: {},
     handler: async (ctx, _args) => {
         await requireUserAuth(ctx);
-        return (await ctx.db.query('tags').collect()).concat(
-            new Array(15).fill(0).map((_, index) => {
-                return {
-                    _id: `${index}` as Id<'tags'>,
+        return (await ctx.db.query('tags').collect())
+            .concat(
+                new Array(15).fill(0).map((_, index) => {
+                    return {
+                        _id: `${index}` as Id<'tags'>,
+                        _creationTime: 0,
+                        name: `Tag ${index}`,
+                        color: 'red',
+                        isPinned: false,
+                    };
+                })
+            )
+            .concat([
+                {
+                    _id: 'techlinked' as Id<'tags'>,
                     _creationTime: 0,
-                    name: `Tag ${index}`,
+                    name: 'TechLinked',
                     color: 'red',
                     isPinned: false,
-                };
-            })
-        );
+                },
+            ]);
     },
 });
 
