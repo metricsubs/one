@@ -57,6 +57,7 @@ const schema = defineSchema({
     }).index('by_project_id', ['projectId']),
 });
 
+export type Project = Doc<'projects'>;
 export type Tag = Doc<'tags'>;
 
 export default schema;

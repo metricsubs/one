@@ -2,6 +2,7 @@ import { api } from 'convex/_generated/api';
 import { useAction } from 'convex/react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import type { FileUploadInfo } from '~/core/file';
 import { cn } from '~/lib/cn';
 import { ThumbnailPicker } from '../common/thumbnail-picker';
 import { Label } from '../ui';
@@ -14,23 +15,18 @@ export interface ThumbnailPickerFieldProps {
     label?: string;
 }
 
-export interface ThumbnailPickerFieldState {
-    file: File | null;
-    fileKey: string | null;
-}
-
 export function ThumbnailPickerField({
     className,
     readonly,
     label,
 }: ThumbnailPickerFieldProps) {
-    const field = useFieldContext<ThumbnailPickerFieldState | null>();
+    const field = useFieldContext<FileUploadInfo | undefined>();
 
-    const { file = null, fileKey = null } = field.state.value ?? {};
+    const { file = undefined, fileKey = undefined } = field.state.value ?? {};
 
     const getDownloadUrl = useAction(api.large_files.getPresignedGetObjectUrl);
 
-    const [imageUrl, setImageUrl] = useState<string | null>(null);
+    const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
@@ -46,7 +42,7 @@ export function ThumbnailPickerField({
                     setIsLoading(false);
                 });
         } else {
-            setImageUrl(null);
+            setImageUrl(undefined);
         }
     }, [fileKey, getDownloadUrl]);
 
@@ -58,8 +54,8 @@ export function ThumbnailPickerField({
                 imageUrl={imageUrl}
                 onFileUpdate={(file) =>
                     field.handleChange({
-                        file: file ?? null,
-                        fileKey: null,
+                        file: file ?? undefined,
+                        fileKey: fileKey ?? undefined,
                     })
                 }
                 readonly={readonly ?? false}

@@ -1,4 +1,5 @@
 import { HiCloudArrowUp } from 'react-icons/hi2';
+import { toast } from 'sonner';
 import { cn } from '~/lib/cn';
 
 export interface FileDropZoneProps {
@@ -20,6 +21,11 @@ export default function FileDropZone(props: FileDropZoneProps) {
         const input = e.target;
         const file = input.files?.[0];
         if (file) {
+            if (props.accept && !props.accept.includes(file.type)) {
+                toast.error('Invalid file type');
+                return;
+            }
+
             onFileUpload(file);
         }
         input.value = '';

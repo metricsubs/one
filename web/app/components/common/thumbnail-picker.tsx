@@ -5,9 +5,12 @@ import FileDropZone from './file-dropzone';
 
 export interface ThumbnailPickerProps {
     className?: string;
-    imageUrl: string | null;
-    file: File | null;
-    onFileUpdate: (file: File | null, imageUrl: string | null) => void;
+    imageUrl: string | undefined;
+    file: File | undefined;
+    onFileUpdate: (
+        file: File | undefined,
+        imageUrl: string | undefined
+    ) => void;
     readonly?: boolean;
     isLoading?: boolean;
 }
@@ -30,7 +33,7 @@ export function ThumbnailPicker({
                             intent="plain"
                             size="sq-sm"
                             onClick={() => {
-                                onFileUpdate(null, null);
+                                onFileUpdate(undefined, undefined);
                             }}
                         >
                             <LuTrash2 className="h-4 w-4 text-danger" />
@@ -56,7 +59,7 @@ export function ThumbnailPicker({
         <FileDropZone
             className={cn('relative sm:aspect-video', className)}
             onFileUpload={(file) => {
-                onFileUpdate(file, null);
+                onFileUpdate(file, undefined);
             }}
             icon={<LuImage className="text-subtitle h-6 w-6 mb-2" />}
             title="Upload Thumbnail"

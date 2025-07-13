@@ -1,45 +1,103 @@
+import { api } from 'convex/_generated/api';
+import { useMutation } from 'convex/react';
 import type { ProjectPriority } from 'convex/schema';
 import { useAtom } from 'jotai';
 import { FaArrowUpWideShort } from 'react-icons/fa6';
 import { LuClock } from 'react-icons/lu';
+import { toast } from 'sonner';
 import { Modal, Separator } from '~/components/ui';
-import { createProjectDialogOpenAtom } from '~/core/store/project';
+import type { FileUploadInfo } from '~/core/file';
+import { createProjectDialogOpenAtom } from '~/core/project';
+import { useFileUpload } from '~/hooks/use-file-upload';
 import { checkValidYoutubeUrl } from '~/lib/format';
 import { useAppForm } from '../form/app-form';
-import type { FileDropzoneFieldFileInfo } from '../form/file-dropzone-field';
-import type { ThumbnailPickerFieldState } from '../form/thumbnail-picker-field';
 
 interface ProjectFormData {
     title: string;
     description: string;
     youtubeUrl: string;
-    thumbnailFileInfo: ThumbnailPickerFieldState | null;
-    video4kFileInfo: FileDropzoneFieldFileInfo | null;
+    thumbnailFileInfo: FileUploadInfo | undefined;
+    video4kFileInfo: FileUploadInfo | undefined;
     shouldKickOffSystemPrepping: boolean;
-    priority: ProjectPriority | null;
-    dueDate: number | null;
-    tags: string[];
+    priority: ProjectPriority | undefined;
+    dueDate: number | undefined;
+    tagNames: string[];
 }
 
 const defaultProjectFormData: ProjectFormData = {
     title: '',
     description: '',
     youtubeUrl: '',
-    thumbnailFileInfo: null,
-    video4kFileInfo: null,
+    thumbnailFileInfo: undefined,
+    video4kFileInfo: undefined,
     shouldKickOffSystemPrepping: true,
-    priority: null,
-    dueDate: null,
-    tags: [],
+    priority: undefined,
+    dueDate: undefined,
+    tagNames: [],
 };
 
 export function CreateProjectDialog() {
     const [open, setOpen] = useAtom(createProjectDialogOpenAtom);
+    const createProjectMutation = useMutation(
+        api.projects.manage.createProject
+    );
+    const updateProjectMutation = useMutation(
+        api.projects.manage.updateProject
+    );
+    const kickOffSystemPreppingMutation = useMutation(
+        api.projects.manage.kickOffSystemPrepping
+    );
+
+    const { handleBatchUploadFileTasks } = useFileUpload();
+
+    const createProject = async (value: ProjectFormData) => {
+        const {
+            video4kFileInfo,
+            thumbnailFileInfo,
+            shouldKickOffSystemPrepping,
+            ...restValues
+        } = value;
+
+        const { projectId } = await createProjectMutation(restValues);
+
+        const { shouldUpdateFileKeys, fileKeys } =
+            await handleBatchUploadFileTasks({
+                video4kFileInfo,
+                thumbnailFileInfo,
+            });
+
+        if (shouldUpdateFileKeys) {
+            await updateProjectMutation({
+                projectId,
+                video4kFileKey: fileKeys.video4kFileInfo,
+                thumbnailFileKey: fileKeys.thumbnailFileInfo,
+            });
+        }
+
+        if (shouldKickOffSystemPrepping) {
+            await kickOffSystemPreppingMutation({
+                projectId,
+            });
+        }
+
+        toast.success(
+            'Project created successfully. ' +
+                (shouldKickOffSystemPrepping
+                    ? 'System prepping is kicked off.'
+                    : '')
+        );
+    };
 
     const form = useAppForm({
         defaultValues: defaultProjectFormData,
         onSubmit: (data) => {
-            console.log(data);
+            setOpen(false);
+            form.reset();
+
+            createProject(data.value).catch((error) => {
+                console.error(error);
+                toast.error('Failed to create project');
+            });
         },
     });
 
@@ -135,10 +193,10 @@ export function CreateProjectDialog() {
                         </form.AppField>
                         <form.AppField name="video4kFileInfo">
                             {(field) => (
-                                <field.FileDropzoneField label="Video 4K or Best Quality" />
+                                <field.FileDropzoneField label="Video in 4K or Best Quality" />
                             )}
                         </form.AppField>
-                        <form.AppField name="tags">
+                        <form.AppField name="tagNames">
                             {(field) => <field.TagInputField label="Tags" />}
                         </form.AppField>
                         <form.AppField name="shouldKickOffSystemPrepping">
