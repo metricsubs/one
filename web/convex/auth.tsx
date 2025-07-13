@@ -64,7 +64,7 @@ export async function requireUserAuth({
         const [_type, token] = authorizationHeader.split(' ');
         if (token === process.env.SERVICE_TOKEN) {
             return {
-                id: 'service-token',
+                id: 'service-bot',
                 username: 'Service Bot',
                 bio: undefined,
                 email: 'noreply@metricsubs.com',

@@ -9,7 +9,9 @@
         "typecheck": "react-router typegen && tsc",
         "dev:convex": "convex dev",
         "dev:email": "email dev",
-        "deploy:convex": "convex deploy"
+        "deploy:convex": "convex deploy",
+        "generate-keys": "node scripts/generate-keys.mjs",
+        "generate-secret": "node scripts/generate-secret.mjs"
     },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.842.0",

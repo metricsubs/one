@@ -8,7 +8,7 @@ description = ""
 authors = [{ name = "dizys", email = "dev@dizy.cc" }]
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["modal (>=1.0.4,<2.0.0)", "yt-dlp (>=2025.6.30,<2026.0.0)", "fastapi (>=0.116.1,<0.117.0)"]
+dependencies = ["modal (>=1.0.4,<2.0.0)", "yt-dlp (>=2025.6.30,<2026.0.0)", "fastapi (>=0.116.1,<0.117.0)", "convex (>=0.7.0,<0.8.0)", "python-dotenv (>=1.1.1,<2.0.0)", "ffmpeg (>=1.4,<2.0)"]
 
 
 [build-system]
