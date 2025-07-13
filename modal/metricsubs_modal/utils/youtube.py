@@ -1,6 +1,7 @@
 import logging
 from typing import List, Optional, TypedDict
 from pathlib import Path
+from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 from .config import YOUTUBE_COOKIES, YOUTUBE_DIR, get_logger
 
 logger = get_logger(__name__)
@@ -16,6 +17,32 @@ def is_url_youtube(url: str) -> bool:
         or url.startswith("https://youtube.com/")
         or url.startswith("https://m.youtube.com/")
     )
+
+def sanitize_youtube_url(url: str) -> str:
+    """Sanitize a YouTube URL."""
+    """ - parse the url """
+    """ - remove playlist parameter if it exists so yt-dlp doesn't download the whole playlist """
+
+    if not is_url_youtube(url):
+        raise ValueError(f"Invalid YouTube URL: {url}")
+
+    parsed_url = urlparse(url)
+    query_params = parse_qs(parsed_url.query)
+    if "list" in query_params:
+        query_params.pop("list")
+    
+    # Reconstruct the URL with modified query parameters
+    new_query = urlencode(query_params, doseq=True)
+    new_url = urlunparse((
+        parsed_url.scheme,
+        parsed_url.netloc,
+        parsed_url.path,
+        parsed_url.params,
+        new_query,
+        parsed_url.fragment
+    ))
+    
+    return new_url
 
 class LocalYoutubeVideoInfo(TypedDict):
     video_id: str
@@ -45,6 +72,8 @@ def download_youtube_video(
     url: str
 ) -> LocalYoutubeVideoInfo:
     """Download a YouTube video and return the path to the downloaded video."""
+
+    url = sanitize_youtube_url(url)
 
     import yt_dlp
 

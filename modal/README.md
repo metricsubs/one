@@ -12,13 +12,15 @@ poetry run modal
 poetry run modal environment create staging
 ```
 
-## Run local entrypoint
+## Dev & deployment
+
+### Run local entrypoint
 
 ```
 poetry run modal run metricsubs_modal.main
 ```
 
-## Deploy to Modal
+### Deploy to Modal
 
 Deploy to staging
 
@@ -30,4 +32,10 @@ Deploy to prod
 
 ```
 poetry run modal deploy metricsubs_modal.main --env main
+```
+
+## Volume management
+
+```
+poetry run modal volume ls metricsubs-data --env staging /youtube/
 ```

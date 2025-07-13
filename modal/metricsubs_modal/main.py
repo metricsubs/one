@@ -40,7 +40,6 @@ def square(x):
     print("This code is running on a remote worker!")
     return x**2
 
-
 @app.function()
 def extract_audio_from_video(video_path: Path, output_path: Path):
     from metricsubs_modal.utils.video import extract_audio_from_video
@@ -55,7 +54,6 @@ def transcode_video_to_1080p(video_path: Path, output_path: Path):
 def download_youtube_video_and_transcode(url: str):
     from metricsubs_modal.utils.youtube import download_youtube_video
     local_video_info = download_youtube_video(url)
-
     if not local_video_info:
         raise Exception("Failed to download video")
     

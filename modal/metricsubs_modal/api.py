@@ -22,7 +22,8 @@ async def download_youtube_video(url: str):
 @web_app.get("/youtube/download/{call_id}")
 async def get_youtube_video_download_status(call_id: str):
     call = FunctionCall.from_id(call_id)
-    result = call.get(timeout=0)
+    result = call.get_call_graph()
+    result[0].status
     return result
 
 @web_app.get("/youtube/cookies")
