@@ -45,13 +45,36 @@ interface ClerkPublicMetadata {
     roles: UserRole[];
 }
 
-export async function requireUserAuth(
+interface RequireUserAuthOptions {
     ctx:
         | GenericQueryCtx<DataModel>
         | GenericMutationCtx<DataModel>
-        | GenericActionCtx<DataModel>,
-    role?: UserRole | undefined
-): Promise<UserInfo> {
+        | GenericActionCtx<DataModel>;
+    role?: UserRole | undefined;
+    request?: Request;
+}
+
+export async function requireUserAuth({
+    ctx,
+    role,
+    request,
+}: RequireUserAuthOptions): Promise<UserInfo> {
+    const authorizationHeader = request?.headers.get('Authorization');
+    if (authorizationHeader && authorizationHeader.startsWith('Bearer ')) {
+        const [_type, token] = authorizationHeader.split(' ');
+        if (token === process.env.SERVICE_TOKEN) {
+            return {
+                id: 'service-token',
+                username: 'Service Bot',
+                bio: undefined,
+                email: 'noreply@metricsubs.com',
+                emailVerified: true,
+                pictureUrl: undefined,
+                roles: ['admin', 'contributor'],
+            };
+        }
+    }
+
     const user = await ctx.auth.getUserIdentity();
     if (!user) {
         throw new Error('Unauthorized');

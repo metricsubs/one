@@ -6,6 +6,11 @@
 poetry run modal
 ```
 
+## First time env creation
+
+```
+poetry run modal environment create staging
+```
 
 ## Run local entrypoint
 

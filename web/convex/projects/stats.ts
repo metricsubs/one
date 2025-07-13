@@ -85,7 +85,7 @@ const stats = [
 export const getStats = query({
     args: {},
     handler: async (ctx) => {
-        await requireUserAuth(ctx);
+        await requireUserAuth({ ctx });
         return {
             stats,
         };

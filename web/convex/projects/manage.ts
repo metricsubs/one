@@ -1,3 +1,4 @@
+import { internal } from 'convex/_generated/api';
 import type { Id } from 'convex/_generated/dataModel';
 import { requireUserAuth } from 'convex/auth';
 import {
@@ -7,12 +8,13 @@ import {
     type Tag,
 } from 'convex/schema';
 import { v } from 'convex/values';
+import { workflow } from 'convex/workflow';
 import { mutation, query, type MutationCtx } from '../_generated/server';
 
 export const getProjects = query({
     args: {},
     handler: async (ctx, _args) => {
-        await requireUserAuth(ctx);
+        await requireUserAuth({ ctx });
         let query = ctx.db.query('projects');
         return await query.collect();
     },
@@ -80,7 +82,7 @@ export const createProject = mutation({
         priority: v.optional(vProjectPriority),
     },
     handler: async (ctx, args) => {
-        await requireUserAuth(ctx);
+        await requireUserAuth({ ctx });
 
         const selectedTagNames = args.tagNames ?? [];
         const allSelectedTags = await getOrCreateTags(ctx, selectedTagNames);
@@ -121,9 +123,10 @@ export const updateProject = mutation({
         video1080pFileKey: v.optional(v.string()),
         durationInSeconds: v.optional(v.number()),
         tagNames: v.optional(v.array(v.string())),
+        status: v.optional(vProjectStatus),
     },
     handler: async (ctx, args) => {
-        await requireUserAuth(ctx);
+        await requireUserAuth({ ctx });
 
         const { projectId, tagNames, ...restArgs } = args;
 
@@ -146,9 +149,30 @@ export const kickOffSystemPrepping = mutation({
         projectId: v.id('projects'),
     },
     handler: async (ctx, args) => {
-        await requireUserAuth(ctx);
+        await requireUserAuth({ ctx });
+
         await ctx.db.patch(args.projectId, {
             status: 'system-pending',
         });
+
+        const workflowId = await workflow.start(
+            ctx,
+            internal.projects.manage.systemPrepWorkflow,
+            {
+                projectId: args.projectId,
+            }
+        );
+
+        const status = await workflow.status(ctx, workflowId);
+        console.log(status);
+    },
+});
+
+export const systemPrepWorkflow = workflow.define({
+    args: {
+        projectId: v.id('projects'),
+    },
+    handler: async (step, args) => {
+        const { projectId } = args;
     },
 });

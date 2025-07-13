@@ -6,7 +6,7 @@ import { mutation, query } from '../_generated/server';
 export const getTags = query({
     args: {},
     handler: async (ctx, _args) => {
-        await requireUserAuth(ctx);
+        await requireUserAuth({ ctx });
         return (await ctx.db.query('tags').collect())
             .concat(
                 new Array(15).fill(0).map((_, index) => {
@@ -38,7 +38,7 @@ export const createTag = mutation({
         isPinned: v.optional(v.boolean()),
     },
     handler: async (ctx, args) => {
-        await requireUserAuth(ctx);
+        await requireUserAuth({ ctx });
         return await ctx.db.insert('tags', {
             name: args.name,
             color: args.color,
