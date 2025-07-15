@@ -55,7 +55,7 @@ export const getPresignedPutObjectUrl = action({
         contentLength: v.number(),
     },
     handler: async (ctx, args) => {
-        const user = await requireUserAuth(ctx);
+        const user = await requireUserAuth({ ctx });
         let contentType = args.contentType;
         if (isContentTypeForbidden(args.contentType)) {
             contentType = 'application/octet-stream';
@@ -96,7 +96,7 @@ export const getObjectMetadata = action({
         fullFileKey: v.string(),
     },
     handler: async (ctx, args) => {
-        const user = await requireUserAuth(ctx);
+        const user = await requireUserAuth({ ctx });
         const command = new HeadObjectCommand({
             Bucket: process.env.S3_BUCKET,
             Key: args.fullFileKey,
@@ -142,7 +142,7 @@ export const startMultipartUpload = action({
         contentLength: v.number(),
     },
     handler: async (ctx, args) => {
-        const user = await requireUserAuth(ctx);
+        const user = await requireUserAuth({ ctx });
         let contentType = args.contentType;
         if (isContentTypeForbidden(args.contentType)) {
             contentType = 'application/octet-stream';
@@ -178,7 +178,7 @@ export const getPresignedPartUploadUrl = action({
         partNumber: v.number(),
     },
     handler: async (ctx, args) => {
-        await requireUserAuth(ctx);
+        await requireUserAuth({ ctx });
         const command = new UploadPartCommand({
             Bucket: process.env.S3_BUCKET,
             Key: args.fullFileKey,
@@ -209,7 +209,7 @@ export const completeMultipartUpload = action({
         ),
     },
     handler: async (ctx, args) => {
-        await requireUserAuth(ctx);
+        await requireUserAuth({ ctx });
         const command = new CompleteMultipartUploadCommand({
             Bucket: process.env.S3_BUCKET,
             Key: args.fullFileKey,
@@ -239,7 +239,7 @@ export const abortMultipartUpload = action({
         uploadId: v.string(),
     },
     handler: async (ctx, args) => {
-        await requireUserAuth(ctx);
+        await requireUserAuth({ ctx });
         const command = new AbortMultipartUploadCommand({
             Bucket: process.env.S3_BUCKET,
             Key: args.fullFileKey,

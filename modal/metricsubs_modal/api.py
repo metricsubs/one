@@ -37,3 +37,18 @@ async def clear_youtube_cache():
     import shutil
     shutil.rmtree(YOUTUBE_DIR, ignore_errors=True)
     return {"message": "Cache cleared"}
+
+
+@web_app.post("/example")
+async def example():
+    from metricsubs_modal.utils.config import get_convex_client
+    convex_client = get_convex_client()
+    result = convex_client.action(
+        "large_files:getPresignedPutObjectUrl",
+        {
+            "filename": "test.txt",
+            "contentType": "text/plain",
+            "contentLength": 100,
+        }
+    )
+    return {"result": result}

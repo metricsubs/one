@@ -15,6 +15,8 @@ export const vProjectStatus = v.union(
     v.literal('cancelled')
 );
 
+export type ProjectStatus = typeof vProjectStatus.type;
+
 export const vProjectPriority = v.union(
     v.literal('low'),
     v.literal('medium'),
@@ -22,6 +24,41 @@ export const vProjectPriority = v.union(
 );
 
 export type ProjectPriority = typeof vProjectPriority.type;
+
+export const vModalJobStatus = v.union(
+    v.literal('pending'),
+    v.literal('cancelled'),
+    v.literal('running'),
+    v.literal('success'),
+    v.literal('failed')
+);
+
+export type ModalJobStatus = typeof vModalJobStatus.type;
+
+export const vModalJobStep = v.object({
+    callId: v.string(),
+    name: v.string(),
+    status: vModalJobStatus,
+    message: v.optional(v.string()),
+    startedAt: v.optional(v.number()),
+    completedAt: v.optional(v.number()),
+});
+
+export type ModalJobStep = typeof vModalJobStep.type;
+
+export const vModalJobArtifactCategory = v.union(v.literal('encoded-video'));
+
+export type ModalJobArtifactCategory = typeof vModalJobArtifactCategory.type;
+
+export const vModalJobArtifact = v.object({
+    category: vModalJobArtifactCategory,
+    fileKey: v.string(),
+    filename: v.string(),
+    contentType: v.string(),
+    contentLength: v.number(),
+});
+
+export type ModalJobArtifact = typeof vModalJobArtifact.type;
 
 const schema = defineSchema({
     // Your other tables...
@@ -55,6 +92,17 @@ const schema = defineSchema({
         projectId: v.id('projects'),
         document: v.bytes(),
     }).index('by_project_id', ['projectId']),
+    modalJobs: defineTable({
+        projectId: v.id('projects'),
+        name: v.string(),
+        steps: v.array(vModalJobStep),
+        callId: v.string(),
+        status: vModalJobStatus,
+        result: v.optional(v.any()),
+        artifacts: v.optional(v.array(vModalJobArtifact)),
+    })
+        .index('by_call_id', ['callId'])
+        .index('by_project_id', ['projectId']),
 });
 
 export type Project = Doc<'projects'>;

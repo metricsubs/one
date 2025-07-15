@@ -5,6 +5,10 @@ import type {
     GenericQueryCtx,
 } from 'convex/server';
 import type { DataModel } from './_generated/dataModel';
+import { httpAction } from './_generated/server';
+
+const SERVICE_BOT_USERNAME = 'service-bot';
+const SERVICE_BOT_SESSION_EXPIRATION_SECONDS = 60 * 60 * 1; // 1 hour
 
 export const clerkClient = createClerkClient({
     secretKey: process.env.CLERK_SECRET_KEY,
@@ -28,7 +32,34 @@ export function checkServiceToken(request: Request): string {
     return token;
 }
 
-export type UserRole = 'admin' | 'proofreader' | 'contributor';
+export const createServiceBotSessionTokenHttpAction = httpAction(
+    async (_ctx, request) => {
+        checkServiceToken(request);
+
+        const session = await clerkClient.sessions.createSession({
+            userId: process.env.SERVICE_BOT_USER_ID!,
+        });
+
+        const sessionToken = await clerkClient.sessions.getToken(
+            session.id,
+            'convex',
+            SERVICE_BOT_SESSION_EXPIRATION_SECONDS
+        );
+
+        return new Response(
+            JSON.stringify({
+                sessionToken: sessionToken.jwt,
+            }),
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+    }
+);
+
+export type UserRole = 'admin' | 'proofreader' | 'contributor' | 'service-bot';
 
 export interface UserInfo {
     id: string;
@@ -64,13 +95,13 @@ export async function requireUserAuth({
         const [_type, token] = authorizationHeader.split(' ');
         if (token === process.env.SERVICE_TOKEN) {
             return {
-                id: 'service-bot',
-                username: 'Service Bot',
+                id: process.env.SERVICE_BOT_USER_ID!,
+                username: SERVICE_BOT_USERNAME,
                 bio: undefined,
                 email: 'noreply@metricsubs.com',
                 emailVerified: true,
                 pictureUrl: undefined,
-                roles: ['admin', 'contributor'],
+                roles: ['admin', 'contributor', 'service-bot'],
             };
         }
     }
