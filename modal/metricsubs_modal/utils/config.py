@@ -3,6 +3,8 @@ from pathlib import Path
 import logging
 import os
 
+import modal
+
 MODELS_DIR = Path("/models")
 DATA_DIR = Path("/data")
 YOUTUBE_DIR = DATA_DIR / "youtube"
@@ -16,7 +18,7 @@ CONVEX_SELF_HOSTED_URL = os.getenv("CONVEX_SELF_HOSTED_URL")
 CONVEX_SERVICE_TOKEN = os.getenv("SERVICE_TOKEN")
 
 
-def get_logger(name, level=logging.INFO):
+def get_logger(name, level=logging.INFO) -> logging.Logger:
     """Return a logger with a default handler."""
     logger = logging.getLogger(name)
     handler = logging.StreamHandler()
@@ -28,6 +30,12 @@ def get_logger(name, level=logging.INFO):
     logger.propagate = False  # Prevent the modal client from double-logging.
     return logger
 
+
+def log_current_function(logger: logging.Logger):
+    call_id = modal.current_function_call_id()
+    logger.info(f"current_function_call_id: {call_id}")
+    func_call = modal.FunctionCall.from_id(call_id)
+    logger.info(func_call.get_call_graph())
 
 def get_convex_service_bot_session_token():
     import requests

@@ -1,7 +1,9 @@
 
 from fastapi import FastAPI
 from modal import FunctionCall
+import modal
 from metricsubs_modal.utils.config import get_logger
+from pydantic import BaseModel
 
 logger = get_logger(__name__)
 
@@ -38,7 +40,28 @@ async def clear_youtube_cache():
     shutil.rmtree(YOUTUBE_DIR, ignore_errors=True)
     return {"message": "Cache cleared"}
 
+class KickoffSystemPrepJobRequest(BaseModel):
+    project_id: str
 
+@web_app.post("/kickoff-system-prep-job")
+async def kickoff_system_prep_job(
+    request: KickoffSystemPrepJobRequest
+):
+    # from metricsubs_modal.utils.config import get_convex_client
+    # convex_client = get_convex_client()
+    from metricsubs_modal.utils.config import log_current_function
+    first_caller_id = modal.current_function_call_id()
+    logger.info(f"first_caller_id: {first_caller_id}")
+    log_current_function(logger)
+
+    from .main import square
+    call = square.spawn(1)
+    logger.info(f"spawned square call object id: {call.object_id}")
+
+    [y] = modal.FunctionCall.gather(call)
+    return {"result": y}
+
+    
 @web_app.post("/example")
 async def example():
     from metricsubs_modal.utils.config import get_convex_client

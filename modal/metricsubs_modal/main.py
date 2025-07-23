@@ -36,9 +36,24 @@ def fastapi_app():
 
 
 @app.function()
+def return_as_is(x):
+    print(f"return_as_is: current_function_call_id: {modal.current_function_call_id()}")
+    from metricsubs_modal.utils.config import log_current_function
+    log_current_function(logger)
+    return x
+
+@app.function()
 def square(x):
     print("This code is running on a remote worker!")
-    return x**2
+    print(f"square: current_function_call_id: {modal.current_function_call_id()}")
+    from metricsubs_modal.utils.config import log_current_function
+    log_current_function(logger)
+    func_1 = return_as_is.spawn(x)
+    [y] = modal.FunctionCall.gather(func_1)
+    logger.info(f"y: {y}")
+    y2 = return_as_is.remote(y)
+    logger.info(f"y2: {y2}")
+    return y2**2
 
 @app.function()
 def extract_audio_from_video(video_path: Path, output_path: Path):
